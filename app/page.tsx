@@ -137,7 +137,7 @@ export default function Home() {
       
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-6 lg:pt-24">
         <section className="pb-4 custom-scrollbar">
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-3 lg:gap-6 md:grid-cols-2">
             {[
               {
                 label: "Scrap XP",
