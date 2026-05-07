@@ -1,8 +1,8 @@
 # 🍃 Unscrap — Turn kitchen waste into wonder.
 
 Unscrap is an AI-powered smart repurposing platform that transforms
-domestic organic waste management into an engaging, gamified
-sustainability experience called **The 3R Lab**.
+domestic organic waste management into an engaging and interactive
+sustainability experience.
 
 Built for Filipino households, Unscrap helps users discover practical
 ways to reuse kitchen waste such as vegetable peels, eggshells, coffee
@@ -30,18 +30,6 @@ analyze texture and safety, and recommend the best reuse or recycling
 methods.
 
 Powered by **Gemini 2.5 Pro Preview**.
-
-### 🧪 The 3R Lab
-A progression-based gamified experience where users unlock discoveries,
-complete sustainability actions, and level up through eco ranks:
-
-- Reducer
-- Reuser
-- Recycler
-- Restorer
-- Zero Waste
-
-Users can also discover materials across different rarity tiers.
 
 ### 📦 The Bin
 A personal collection system that stores all previously discovered
