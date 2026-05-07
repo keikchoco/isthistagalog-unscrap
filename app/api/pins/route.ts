@@ -47,7 +47,7 @@ export async function PUT(request: Request) {
     const data = await request.json();
     await dbConnect();
 
-    const { id, userId, title, description, location } = data || {};
+    const { id, userId, title, description, contactInfo, location } = data || {};
     if (!id || !userId) {
       return NextResponse.json({ error: 'Pin id and userId are required' }, { status: 400 });
     }
@@ -68,6 +68,9 @@ export async function PUT(request: Request) {
     if (typeof description === 'string') {
       pin.description = description.trim();
     }
+    if (typeof contactInfo === 'string') {
+      pin.contactInfo = contactInfo.trim();
+    }
     if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
       pin.location = { lat: location.lat, lng: location.lng };
     }
@@ -76,5 +79,31 @@ export async function PUT(request: Request) {
     return NextResponse.json(pin);
   } catch (error) {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const data = await request.json();
+    await dbConnect();
+
+    const { id, userId } = data || {};
+    if (!id || !userId) {
+      return NextResponse.json({ error: 'Pin id and userId are required' }, { status: 400 });
+    }
+
+    const pin = await Pin.findById(id);
+    if (!pin) {
+      return NextResponse.json({ error: 'Pin not found' }, { status: 404 });
+    }
+
+    if (pin.userId !== userId) {
+      return NextResponse.json({ error: 'You can only delete your own hub point.' }, { status: 403 });
+    }
+
+    await Pin.findByIdAndDelete(id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
   }
 }

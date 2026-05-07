@@ -9,7 +9,7 @@ import {
   useMapEvents 
 } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Search, Plus, X, Share2, Clipboard, Leaf, Pencil } from 'lucide-react';
+import { MapPin, Search, Plus, X, Share2, Clipboard, Leaf, Pencil, Trash2, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Fix for default marker icons in Leaflet with React
@@ -30,6 +30,7 @@ interface CommunityPin {
   title: string;
   type: 'scrap' | 'drop-off' | 'exchange';
   description: string;
+  contactInfo?: string;
   location: { lat: number; lng: number };
   createdAt: string;
 }
@@ -52,12 +53,14 @@ export default function CommunityMap({ user }: { user: any }) {
   const [clickedLocation, setClickedLocation] = useState<L.LatLng | null>(null);
   const [newPinTitle, setNewPinTitle] = useState('');
   const [newPinDescription, setNewPinDescription] = useState('');
+  const [newPinContactInfo, setNewPinContactInfo] = useState('');
   const [newPinType] = useState<'scrap' | 'drop-off' | 'exchange'>('drop-off');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editingPinId, setEditingPinId] = useState<string | null>(null);
   const [editPinTitle, setEditPinTitle] = useState('');
   const [editPinDescription, setEditPinDescription] = useState('');
+  const [editPinContactInfo, setEditPinContactInfo] = useState('');
   const [isEditingLocationMode, setIsEditingLocationMode] = useState(false);
 
   useEffect(() => {
@@ -112,6 +115,7 @@ export default function CommunityMap({ user }: { user: any }) {
           title: newPinTitle,
           type: newPinType,
           description: newPinDescription || 'Shared via Unscrap community',
+          contactInfo: newPinContactInfo,
           location: { lat: clickedLocation.lat, lng: clickedLocation.lng },
         })
       });
@@ -121,6 +125,7 @@ export default function CommunityMap({ user }: { user: any }) {
         setClickedLocation(null);
         setNewPinTitle('');
         setNewPinDescription('');
+        setNewPinContactInfo('');
         fetchPins();
       } else {
         const payload = await res.json().catch(() => ({}));
@@ -139,6 +144,7 @@ export default function CommunityMap({ user }: { user: any }) {
     setEditingPinId(pin._id);
     setEditPinTitle(pin.title);
     setEditPinDescription(pin.description || '');
+    setEditPinContactInfo(pin.contactInfo || '');
     setClickedLocation(L.latLng(pin.location.lat, pin.location.lng));
     setIsEditingLocationMode(false);
   };
@@ -173,6 +179,7 @@ export default function CommunityMap({ user }: { user: any }) {
           userId: user.email,
           title: editPinTitle,
           description: editPinDescription,
+          contactInfo: editPinContactInfo,
           location,
         }),
       });
@@ -186,12 +193,53 @@ export default function CommunityMap({ user }: { user: any }) {
       setEditingPinId(null);
       setEditPinTitle('');
       setEditPinDescription('');
+      setEditPinContactInfo('');
       setClickedLocation(null);
       setIsEditingLocationMode(false);
       await fetchPins();
     } catch (error) {
       console.error('Error updating pin:', error);
       setErrorMessage('Could not update hub point. Please try again.');
+    }
+  };
+
+  const handleDeletePin = async (pinId: string) => {
+    setErrorMessage(null);
+
+    if (!user?.email) {
+      setErrorMessage('Please sign in to delete a hub point.');
+      return;
+    }
+
+    const confirmed = window.confirm('Delete this hub point? This cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch('/api/pins', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: pinId, userId: user.email }),
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        setErrorMessage(payload?.error || 'Could not delete hub point.');
+        return;
+      }
+
+      if (editingPinId === pinId) {
+        setEditingPinId(null);
+        setEditPinTitle('');
+        setEditPinDescription('');
+        setEditPinContactInfo('');
+        setClickedLocation(null);
+        setIsEditingLocationMode(false);
+      }
+
+      await fetchPins();
+    } catch (error) {
+      console.error('Error deleting pin:', error);
+      setErrorMessage('Could not delete hub point. Please try again.');
     }
   };
 
@@ -237,7 +285,7 @@ export default function CommunityMap({ user }: { user: any }) {
   };
 
   return (
-    <div className="relative flex flex-col h-fit min-h-fit rounded-[48px] overflow-hidden border-4 border-primary bg-surface shadow-2xl">
+    <div className="relative flex flex-col h-fit min-h-fit rounded-[28px] sm:rounded-[40px] lg:rounded-[48px] overflow-hidden border-2 sm:border-2 border-primary bg-surface shadow-2xl">
       {/* <div className="absolute top-0 left-0 right-0 z-[1000] p-4">
         <motion.div 
             initial={{ y: -50 }}
@@ -259,7 +307,7 @@ export default function CommunityMap({ user }: { user: any }) {
         </motion.div>
       </div> */}
 
-      <div className="absolute top-6 left-6 z-100 flex flex-col gap-4 max-w-sm w-full">
+      <div className="absolute top-3 left-3 right-3 sm:top-6 sm:left-6 sm:right-auto z-100 flex flex-col gap-3 sm:gap-4 w-auto sm:w-full sm:max-w-sm">
         <div className="bg-surface/90 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-bark/10 flex items-center gap-3 px-4">
           <Search className="w-4 h-4 text-muted" />
           <input 
@@ -306,7 +354,7 @@ export default function CommunityMap({ user }: { user: any }) {
         center={[14.5995, 120.9842]} 
         zoom={11} 
         scrollWheelZoom={true} 
-        className="w-full h-[600px] md:h-[680px] z-0"
+        className="w-full h-[70vh] min-h-140 sm:min-h-155 md:h-150 md:min-h-0 lg:h-170 z-0"
         zoomControl={false}
       >
         <TileLayer
@@ -325,7 +373,7 @@ export default function CommunityMap({ user }: { user: any }) {
             icon={getIcon(pin.type)}
           >
             <Popup>
-              <div className="p-4 min-w-[240px] space-y-4 bg-surface text-ink font-sans">
+              <div className="p-4 min-w-60 space-y-4 bg-surface text-ink font-sans">
                 <div className="flex items-center justify-between gap-4">
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
                     pin.type === 'scrap' ? 'bg-moss/10 text-moss' : 
@@ -341,6 +389,13 @@ export default function CommunityMap({ user }: { user: any }) {
                   <p className="text-xs text-bark leading-relaxed">"{pin.description}"</p>
                 </div>
 
+                {pin.contactInfo && (
+                  <div className="rounded-xl border border-bark/10 bg-sprout/10 p-3 space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">Contact info</p>
+                    <p className="text-xs text-bark leading-relaxed whitespace-pre-wrap">{pin.contactInfo}</p>
+                  </div>
+                )}
+
                 <div className="flex gap-2 pt-1">
                   <button 
                     onClick={() => openOsmDirections(pin)}
@@ -355,13 +410,22 @@ export default function CommunityMap({ user }: { user: any }) {
                     {copiedId === pin._id ? <Clipboard className="w-3.5 h-3.5 text-moss" /> : <Share2 className="w-3.5 h-3.5" />}
                   </button> */}
                   {user?.email === pin.userId && (
-                    <button
-                      onClick={() => handleStartEdit(pin)}
-                      className="w-10 h-8 bg-sprout/10 text-muted rounded-lg flex items-center justify-center hover:text-moss transition-colors"
-                      aria-label="Edit hub point"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleStartEdit(pin)}
+                        className="w-10 h-8 bg-sprout/10 text-muted rounded-lg flex items-center justify-center hover:text-moss transition-colors"
+                        aria-label="Edit hub point"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeletePin(pin._id)}
+                        className="w-10 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors"
+                        aria-label="Delete hub point"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
@@ -374,7 +438,7 @@ export default function CommunityMap({ user }: { user: any }) {
       </MapContainer>
 
       {isAddingMode && clickedLocation && (
-        <div className="absolute top-24 right-6 z-[1002] w-[300px] bg-surface/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-bark/10">
+        <div className="absolute left-3 right-3 sm:left-auto sm:right-6 top-32 sm:top-24 z-1002 w-auto sm:w-75 max-h-[calc(100%-10rem)] overflow-y-auto bg-surface/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-bark/10">
           <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-2">Place Hub Point</p>
           <p className="text-[10px] font-semibold text-muted mb-3">
             Selected: {clickedLocation.lat.toFixed(5)}, {clickedLocation.lng.toFixed(5)}
@@ -392,6 +456,12 @@ export default function CommunityMap({ user }: { user: any }) {
             value={newPinDescription}
             onChange={e => setNewPinDescription(e.target.value)}
           />
+          <textarea
+            placeholder="Contact info (email, phone, social handle, or meetup notes)"
+            className="w-full text-xs font-medium bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none focus:border-moss mb-3 resize-none h-20 text-ink"
+            value={newPinContactInfo}
+            onChange={e => setNewPinContactInfo(e.target.value)}
+          />
           <button
             onClick={handleAddPin}
             className="w-full bg-primary text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-md hover:scale-105 active:scale-95 transition-all"
@@ -402,7 +472,7 @@ export default function CommunityMap({ user }: { user: any }) {
       )}
 
       {editingPinId && (
-        <div className="absolute top-24 right-6 z-[1002] w-[300px] bg-surface/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-bark/10">
+        <div className="absolute left-3 right-3 sm:left-auto sm:right-6 top-32 sm:top-24 z-1002 w-auto sm:w-75 max-h-[calc(100%-10rem)] overflow-y-auto bg-surface/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-bark/10">
           <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-2">Edit Hub Point</p>
           {clickedLocation && (
             <p className="text-[10px] font-semibold text-muted mb-3">
@@ -441,12 +511,19 @@ export default function CommunityMap({ user }: { user: any }) {
             value={editPinDescription}
             onChange={e => setEditPinDescription(e.target.value)}
           />
+          <textarea
+            placeholder="Contact info (email, phone, social handle, or meetup notes)"
+            className="w-full text-xs font-medium bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none focus:border-moss mb-3 resize-none h-20 text-ink"
+            value={editPinContactInfo}
+            onChange={e => setEditPinContactInfo(e.target.value)}
+          />
           <div className="flex gap-2">
             <button
               onClick={() => {
                 setEditingPinId(null);
                 setEditPinTitle('');
                 setEditPinDescription('');
+                setEditPinContactInfo('');
                 setClickedLocation(null);
                 setIsEditingLocationMode(false);
                 setErrorMessage(null);
@@ -462,13 +539,21 @@ export default function CommunityMap({ user }: { user: any }) {
               Save Changes
             </button>
           </div>
+          {user?.email === pins.find((pin) => pin._id === editingPinId)?.userId && (
+            <button
+              onClick={() => handleDeletePin(editingPinId)}
+              className="mt-2 w-full bg-red-50 text-red-600 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-all"
+            >
+              Delete Hub Point
+            </button>
+          )}
         </div>
       )}
 
       {isAddingMode && !clickedLocation && (
-        <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none flex items-center justify-center z-[1001]">
-          <div className="bg-surface/90 backdrop-blur px-6 py-3 rounded-2xl shadow-2xl border border-bark/10 animate-pulse">
-            <p className="text-xs font-black text-ink uppercase tracking-widest">Click on the map to drop a pin</p>
+        <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none flex items-center justify-center z-1001 p-4">
+          <div className="bg-surface/90 backdrop-blur px-4 sm:px-6 py-3 rounded-2xl shadow-2xl border border-bark/10 animate-pulse text-center">
+            <p className="text-[11px] sm:text-xs font-black text-ink uppercase tracking-widest">Click on the map to drop a pin</p>
           </div>
         </div>
       )}

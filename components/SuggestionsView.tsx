@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { History, Sparkles, ChefHat, Leaf, RefreshCw, Star, Package, Sparkle } from 'lucide-react';
+import { History, Sparkles, ChefHat, Leaf, RefreshCw, Star, Package, Sparkle, X, ChevronRight } from 'lucide-react';
 
 interface ScanItem {
   _id: string;
@@ -25,6 +25,7 @@ interface SuggestionsViewProps {
 export default function SuggestionsView({ history }: SuggestionsViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [rarityFilter, setRarityFilter] = useState<string>('All');
+  const [selectedItemName, setSelectedItemName] = useState<string | null>(null);
 
   const knownItems: Array<{ name: string; rarity: string; icon: React.ReactElement; imageUrl?: string }> = [
     { name: "Banana Peel", rarity: "Everyday", icon: <Package className="w-full h-full" /> },
@@ -40,6 +41,30 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
   ];
 
   const historyItems = history.map(h => (h.item || '').toLowerCase());
+
+  const selectedItemHistory = useMemo(() => {
+    if (!selectedItemName) return [] as ScanItem[];
+    return history.filter((scan) => (scan.item || '').toLowerCase() === selectedItemName.toLowerCase());
+  }, [history, selectedItemName]);
+
+  const selectedItemSuggestions = useMemo(() => {
+    const allSuggestions = selectedItemHistory.flatMap((scan) => scan.suggestions || []);
+    const unique = new Map<string, any>();
+
+    allSuggestions.forEach((suggestion) => {
+      const key = `${suggestion?.title || ''}-${suggestion?.description || ''}-${suggestion?.type || ''}`;
+      if (!unique.has(key)) {
+        unique.set(key, suggestion);
+      }
+    });
+
+    return Array.from(unique.values());
+  }, [selectedItemHistory]);
+
+  const selectedKnownItem = useMemo(
+    () => knownItems.find((item) => item.name.toLowerCase() === selectedItemName?.toLowerCase()) ?? null,
+    [knownItems, selectedItemName],
+  );
   
   const filteredHistory = history.filter(item => {
     const matchesSearch = (item.item || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -81,6 +106,14 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
 
   const tips = getPersonalizedTips();
 
+  const openItemModal = (itemName: string) => {
+    setSelectedItemName(itemName);
+  };
+
+  const closeItemModal = () => {
+    setSelectedItemName(null);
+  };
+
   return (
     <div className="flex-1 flex flex-col gap-12 bg-transparent text-ink">
       <section className="space-y-6">
@@ -101,12 +134,12 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-surface border border-bark/10 rounded-3xl p-8 relative overflow-hidden group shadow-sm"
+              className="bg-linear-to-br from-[#6a4938] via-[#7c5a3f] to-[#8a6944] border border-bark/10 rounded-3xl p-8 relative overflow-hidden group shadow-sm"
             >
-              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
+              {/* <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
                 <ChefHat className="w-16 h-16 text-ink" />
-              </div>
-              <p className="text-sm text-bark leading-relaxed font-medium relative z-10 italic">"{tip}"</p>
+              </div> */}
+              <p className=" text-surface leading-relaxed relative z-10 italic font-normal">"{tip}"</p>
             </motion.div>
           ))}
         </div>
@@ -149,7 +182,16 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="bg-surface border border-bark/10 rounded-3xl aspect-[3/4] flex flex-col justify-between p-6 shadow-sm group hover:border-moss/40 transition-all"
+                role="button"
+                tabIndex={0}
+                onClick={() => openItemModal(scan.item)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openItemModal(scan.item);
+                  }
+                }}
+                className="bg-surface border border-bark/10 rounded-3xl aspect-3/4 flex flex-col justify-between p-6 shadow-sm group hover:border-moss/40 hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-moss/20"
               >
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] font-bold text-sprout uppercase tracking-wider">#{scan._id.slice(-4)}</span>
@@ -186,6 +228,9 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                     <div className="flex justify-center gap-1">
                         <span className="text-[10px] font-bold text-moss uppercase tracking-wider">+{scan?.xp_reward || 10} XP</span>
                     </div>
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted flex items-center justify-center gap-1">
+                      View suggestions <ChevronRight className="h-3 w-3" />
+                    </p>
                   </div>
               </motion.div>
             ))}
@@ -195,7 +240,16 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                     key={item.name}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="bg-sprout/5 border border-dashed border-bark/20 rounded-3xl aspect-[3/4] flex flex-col items-center justify-center gap-4 opacity-40 group"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openItemModal(item.name)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openItemModal(item.name);
+                      }
+                    }}
+                    className="bg-sprout/5 border border-dashed border-bark/20 rounded-3xl aspect-3/4 flex flex-col items-center justify-center gap-4 opacity-70 group cursor-pointer hover:opacity-100 hover:-translate-y-1 transition-all focus:outline-none focus:ring-2 focus:ring-moss/20"
                 >
                     <div className="w-20 h-20 bg-surface border border-bark/10 rounded-full flex items-center justify-center text-sprout overflow-hidden">
                         {item.imageUrl ? (
@@ -206,13 +260,119 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                     </div>
                     <div className="text-center">
                         <p className="text-[10px] font-bold text-muted uppercase tracking-widest">{item.rarity}</p>
-                        <p className="text-sm font-bold text-muted tracking-tight">Undiscovered</p>
+                        <p className="text-sm font-bold text-muted tracking-tight">View suggestions</p>
                     </div>
                 </motion.div>
             ))}
           </AnimatePresence>
         </div>
       </section>
+
+      <AnimatePresence>
+        {selectedItemName && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-150 bg-black/45 backdrop-blur-sm flex items-center justify-center px-4 py-8"
+            onClick={closeItemModal}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 16, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              onClick={(event) => event.stopPropagation()}
+              className="w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-4xl border border-bark/10 bg-page-bg shadow-2xl flex flex-col"
+            >
+              <div className="flex items-start justify-between gap-4 border-b border-bark/10 px-6 py-5 bg-white/80 backdrop-blur-xl">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.35em] text-muted">Item suggestions</p>
+                  <h3 className="mt-2 text-3xl font-black tracking-tight text-ink">{selectedItemName}</h3>
+                  <p className="mt-1 text-sm text-muted">
+                    {selectedItemHistory.length > 0
+                      ? `${selectedItemHistory.length} scan${selectedItemHistory.length === 1 ? '' : 's'} found`
+                      : 'No scans yet for this item'}
+                  </p>
+                </div>
+                <button
+                  onClick={closeItemModal}
+                  className="rounded-2xl border border-bark/10 bg-white p-3 text-muted transition-colors hover:text-ink"
+                  aria-label="Close modal"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto px-6 py-6 space-y-6">
+                <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+                  <div className="rounded-3xl bg-white border border-bark/10 p-5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.35em] text-muted">Rarity</p>
+                    <p className="mt-2 text-2xl font-black text-primary">
+                      {selectedItemHistory[0]?.rarity || selectedKnownItem?.rarity || 'Unknown'}
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">
+                      Clicked items use the suggestions stored from your scans. If this item has been scanned before, the most relevant tips and repurposing ideas appear here.
+                    </p>
+                  </div>
+
+                  <div className="rounded-3xl bg-linear-to-br from-[#6a4938] via-[#7c5a3f] to-[#8a6944] p-5 text-[#fdf6ec]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.35em] text-[#efe4d2]/80">Stored scans</p>
+                    <div className="mt-3 space-y-2">
+                      {selectedItemHistory.length > 0 ? (
+                        selectedItemHistory.map((scan) => (
+                          <div key={scan._id} className="rounded-2xl bg-white/10 px-4 py-3">
+                            <p className="text-sm font-bold">{scan.category || 'General'}</p>
+                            <p className="text-xs text-[#fdf6ec]/75">
+                              +{scan.xp_reward || 0} XP · ₱{(scan.peso_saved || 0).toFixed(2)} saved
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm leading-relaxed text-[#fdf6ec]/85">
+                          Scan this item to unlock tailored suggestions, compost ideas, and reuse tips.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.35em] text-muted">Suggestions</p>
+                      <h4 className="mt-2 text-xl font-black tracking-tight text-ink">Ways to reuse this item</h4>
+                    </div>
+                  </div>
+
+                  {selectedItemSuggestions.length > 0 ? (
+                    <div className="grid gap-3">
+                      {selectedItemSuggestions.map((suggestion, index) => (
+                        <div key={`${suggestion?.title || 'suggestion'}-${index}`} className="rounded-3xl border border-bark/10 bg-white p-5 shadow-sm">
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <p className="text-sm font-black uppercase tracking-[0.25em] text-moss">
+                                {suggestion?.type || 'other'}
+                              </p>
+                              <h5 className="mt-2 text-lg font-bold text-ink">{suggestion?.title || 'Suggestion'}</h5>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-sm leading-relaxed text-muted">
+                            {suggestion?.description || 'No description available.'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-3xl border border-dashed border-bark/20 bg-surface p-6 text-sm text-muted">
+                      No stored suggestions yet for this item. Scan it to generate reuse ideas.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

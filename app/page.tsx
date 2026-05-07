@@ -91,7 +91,7 @@ export default function Home() {
   const progressPercent = Math.round((currentRankIndex + nextRankProgressPercent / 100) * (100 / (rankOrder.length - 1)));
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#6B8F5E]/30 to-white selection:bg-sprout flex flex-col font-sans text-ink">
+    <div className="min-h-screen bg-transparent selection:bg-sprout flex flex-col font-sans text-ink">
       <section className="relative mt-20 overflow-hidden border border-bark/10 bg-surface shadow-[0_20px_60px_rgba(0,0,0,0.03)] sm:mt-24 lg:mt-24 lg:p-12">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-linear-to-b from-page-bg via-page-bg/80 to-transparent lg:bg-linear-to-r lg:from-page-bg lg:from-30% lg:to-70% lg:to-transparent" />

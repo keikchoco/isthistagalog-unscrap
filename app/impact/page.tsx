@@ -64,7 +64,7 @@ export default function ImpactPage() {
   const progressPercent = Math.round((currentRankIndex + nextRankProgressPercent / 100) * (100 / (rankOrder.length - 1)));
 
   return (
-    <div className="min-h-screen bg-page-bg selection:bg-sprout flex flex-col font-sans text-ink">
+    <div className="min-h-screen bg-transparent selection:bg-sprout flex flex-col font-sans text-ink">
       <main className="pt-28 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full space-y-12">
         <div className="grid lg:grid-cols-2 gap-6">
           {[

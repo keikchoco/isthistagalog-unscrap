@@ -6,7 +6,7 @@ import { Scan, User } from '@/lib/models';
 
 export async function POST(request: Request) {
   try {
-    const { image, mimeType, userId } = await request.json();
+    const { image, mimeType } = await request.json();
     
     if (!image) {
       return NextResponse.json({ error: 'Image is required' }, { status: 400 });
@@ -14,9 +14,26 @@ export async function POST(request: Request) {
 
     const analysis = await analyzeWaste(image, mimeType);
 
+    return NextResponse.json(analysis);
+  } catch (error) {
+    console.error('Scan API error:', error);
+    return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const { image, mimeType, userId, analysis } = await request.json();
+
+    if (!image || !mimeType || !analysis) {
+      return NextResponse.json({ error: 'image, mimeType, and analysis are required' }, { status: 400 });
+    }
+
+    const resolvedUserId = userId || 'anonymous';
+
     const imageBuffer = Buffer.from(image, 'base64');
     const blob = await put(
-      `scans/${userId || 'anonymous'}/${Date.now()}.jpg`,
+      `scans/${resolvedUserId}/${Date.now()}.jpg`,
       imageBuffer,
       {
         access: 'public',
@@ -30,12 +47,10 @@ export async function POST(request: Request) {
     // Save scan to DB
     const newScan = await Scan.create({
       ...analysis,
-      userId,
+      userId: resolvedUserId,
       imageUrl: blob.url,
       timestamp: new Date()
     });
-
-    const resolvedUserId = userId || 'anonymous';
 
     // Update user stats for the authenticated user or anonymous fallback.
     await User.findOneAndUpdate(

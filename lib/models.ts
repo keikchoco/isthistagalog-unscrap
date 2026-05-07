@@ -53,6 +53,7 @@ export interface IPin extends Document {
   userName: string;
   title: string;
   description: string;
+  contactInfo?: string;
   type: 'scrap' | 'drop-off' | 'exchange';
   location: {
     lat: number;
@@ -66,6 +67,7 @@ const PinSchema: Schema = new Schema({
   userName: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String },
+  contactInfo: { type: String },
   type: { type: String, enum: ['scrap', 'drop-off', 'exchange'], default: 'scrap' },
   location: {
     lat: { type: Number, required: true },

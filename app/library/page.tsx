@@ -31,7 +31,7 @@ export default function SuggestionsPage() {
   }, [sessionUser?.email, sessionUser?.name]);
 
   return (
-    <div className="min-h-screen bg-white selection:bg-sprout flex flex-col font-sans text-ink">
+    <div className="min-h-screen bg-transparent selection:bg-sprout flex flex-col font-sans text-ink">
       <main className="pt-28 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full">
         <SuggestionsView history={scanHistory} />
       </main>
