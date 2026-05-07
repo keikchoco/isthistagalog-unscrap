@@ -296,7 +296,7 @@ export default function ScannerPage() {
             <div />
           </header> */}
 
-          <div className="relative aspect-square w-full bg-ink rounded-[28px] sm:rounded-[48px] overflow-hidden shadow-2xl border-4 sm:border-8 border-surface">
+          <div className="relative aspect-square w-full bg-ink rounded-[28px] sm:rounded-[48px] overflow-hidden shadow-2xl border-3 sm:border-4 border-primary">
             {!image && !isCameraActive ? (
               <div
                 className="absolute inset-0 flex flex-col items-center justify-center gap-6 cursor-pointer group"
@@ -320,16 +320,16 @@ export default function ScannerPage() {
                   playsInline
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-4 sm:gap-6 px-4">
-                  <button
+                <button
                     onClick={stopCamera}
-                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/5 backdrop-blur border border-white/10 flex items-center justify-center text-muted hover:text-red-500 transition-all shadow-xl"
+                    className="absolute top-5 right-5 rounded-2xl backdrop-blur flex items-center justify-center text-white/80 hover:text-red-500 transition-all shadow-xl"
                   >
                     <XCircle className="w-7 h-7 sm:w-8 sm:h-8" />
                   </button>
+                <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-4 sm:gap-6 px-4">
                   <button
                     onClick={captureImage}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-4xl bg-primary flex items-center justify-center text-dark-bg shadow-[0_15px_40px_rgba(92,64,51,0.4)] hover:scale-110 active:scale-95 transition-all border-4 border-white/20"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-4xl flex items-center justify-center text-white/80 bg-primary/40 shadow-[0_15px_40px_rgba(92,64,51,0.4)] hover:scale-110 active:scale-95 transition-all border-4 border-white/20"
                   >
                     <Camera className="w-8 h-8 sm:w-10 sm:h-10" />
                   </button>
@@ -397,13 +397,13 @@ export default function ScannerPage() {
               onClick={() => fileInputRef.current?.click()}
               className="btn-secondary flex-1 justify-center"
             >
-              <Upload className="w-5 h-5 text-moss" /> Upload
+              <Upload className="w-5 h-5" /> Upload
             </button>
             <button
               onClick={startCamera}
               className="btn-primary flex-1 sm:flex-2 justify-center"
             >
-              <Camera className="w-5 h-5" /> Launch Camera
+              <Camera className="w-5 h-5" /> Take a Photo
             </button>
           </div>
 
@@ -426,19 +426,10 @@ export default function ScannerPage() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.35 }}
-            className="w-full max-w-3xl flex flex-col gap-6 transition-all duration-700 mt-4 lg:mt-0 lg:sticky lg:top-8 self-start"
+            className="w-full max-w-3xl flex flex-col gap-1 transition-all duration-700 mt-4 lg:mt-0 lg:sticky lg:top-8 self-start"
           >
-            <header className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-center sm:text-left">
-              <button
-                onClick={handleClear}
-                className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-900 transition-colors shadow-sm"
-              >
-                <XCircle className="w-6 h-6" />
-              </button>
-              <h3 className="text-xl font-bold text-slate-900">Results</h3>
-              <div className="w-12 h-12 bg-accent/5 rounded-2xl flex items-center justify-center">
-                <Zap className="w-6 h-6 text-accent fill-current" />
-              </div>
+            <header className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 text-center sm:text-left">
+              <h3 className="text-3xl font-bold text-moss">Results</h3>
             </header>
 
             <div className="bg-white rounded-[28px] sm:rounded-[48px] shadow-[0_20px_80px_rgba(0,0,0,0.06)] border border-slate-100 p-5 sm:p-10 space-y-8 sm:space-y-10">
@@ -447,7 +438,7 @@ export default function ScannerPage() {
                   {showDetails && (
                     <button
                       onClick={() => setShowDetails(false)}
-                      className="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:text-slate-900 transition-colors"
+                      className="p-3 bg-moss text-white/80 rounded-2xl hover:text-slate-900 transition-colors"
                     >
                       <ChevronRight className="w-5 h-5 rotate-180" />
                     </button>
@@ -462,28 +453,28 @@ export default function ScannerPage() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:flex-nowrap items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                  <div className="bg-accent/5 border border-accent/10 px-3 py-2 rounded-2xl flex items-center gap-2">
-                    <div className="w-6 h-6 bg-accent rounded-lg flex items-center justify-center text-white">
+                  <div className="bg-page-bg px-4 py-2 rounded-2xl flex items-center gap-2">
+                    <div className="w-6 h-6 bg-moss rounded-lg flex items-center justify-center text-white">
                       <Zap className="w-4 h-4 fill-current" />
                     </div>
                     <div>
-                      <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-0.5">
+                      <p className="text-[7px] font-bold text-black/80 uppercase tracking-widest leading-none mb-0.5">
                         XP
                       </p>
-                      <p className="text-sm font-bold text-accent tabular-nums">
+                      <p className="text-sm font-bold text-black/80 tabular-nums">
                         +{result.xp_reward || 0}
                       </p>
                     </div>
                   </div>
-                  <div className="bg-emerald/5 border border-emerald/10 px-3 py-2 rounded-2xl flex items-center gap-2">
-                    <div className="w-6 h-6 bg-emerald-500 rounded-lg flex items-center justify-center text-white">
+                  <div className="bg-page-bg px-4 py-2 rounded-2xl flex items-center gap-2">
+                    <div className="w-6 h-6 bg-moss rounded-lg flex items-center justify-center text-white">
                       <DollarSign className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-0.5">
+                      <p className="text-[7px] font-bold text-black/80 uppercase tracking-widest leading-none mb-0.5">
                         SAVED
                       </p>
-                      <p className="text-sm font-bold text-emerald-600 tabular-nums">
+                      <p className="text-sm font-bold text-black/80 tabular-nums">
                         ₱{((result.peso_saved || 0) * 56).toFixed(0)}
                       </p>
                     </div>
@@ -492,7 +483,7 @@ export default function ScannerPage() {
                     <button
                       onClick={handleSaveScrap}
                       disabled={isLoggingImpact}
-                      className="btn-primary h-12 px-4 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="btn-primary h-12 px-4 text-sm disabled:opacity-60 disabled:cursor-not-allowed text-nowrap"
                     >
                       {isLoggingImpact ? "Logging..." : "Log Impact"}
                     </button>
@@ -506,16 +497,10 @@ export default function ScannerPage() {
 
               {!showDetails ? (
                 <>
-                  <div className="bg-slate-50 border border-slate-100 p-6 rounded-4xl flex flex-col sm:flex-row items-center justify-between group gap-4 text-slate-900 text-sm">
+                  <div className="bg-linear-to-br from-[#6a4938] via-[#7c5a3f] to-[#8a6944] p-6 rounded-4xl flex flex-col sm:flex-row items-center justify-between group gap-4 text-slate-900 text-sm">
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm border border-slate-200 ${
-                          result.rarity === "Rare Resource"
-                            ? "bg-amber-50 text-amber-500"
-                            : result.rarity === "Recyclable"
-                              ? "bg-purple-50 text-purple-500"
-                              : "bg-slate-200 text-slate-600"
-                        }`}
+                        className={`size-15 rounded-2xl flex items-center justify-center text-3xl border text-white`}
                       >
                         {result.rarity === "Rare Resource" ? (
                           <Star className="w-6 h-6" />
@@ -526,19 +511,19 @@ export default function ScannerPage() {
                         )}
                       </div>
                       <div>
-                        <h4 className="font-bold text-[9px] uppercase tracking-wider text-slate-400 mb-1">
+                        <h4 className="font-bold text-xs uppercase tracking-wider text-moss mb-1">
                           {result.rarity || "Common"}
                         </h4>
-                        <p className="text-xl font-bold text-slate-900 tracking-tight group-hover:text-accent transition-colors">
+                        <p className="text-xl font-bold text-white/80 tracking-tight group-hover:text-accent transition-colors">
                           {result.item || "Material"}
                         </p>
                       </div>
                     </div>
                     <div className="text-left sm:text-right">
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 text-right">
+                      <p className="text-xs font-bold text-moss uppercase tracking-wider mb-0.5 text-right">
                         Analysis
                       </p>
-                      <p className="font-bold text-slate-700">
+                      <p className="font-bold text-white/80">
                         {result.category || "Scanning..."}
                       </p>
                     </div>
@@ -552,24 +537,20 @@ export default function ScannerPage() {
                     }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center border-2 ${
-                        result.safe_to_use
-                          ? "bg-emerald/20 border-emerald text-emerald"
-                          : "bg-amber-400/20 border-amber-400 text-amber-400"
-                      }`}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center`}
                     >
-                      <ShieldCheck className="w-5 h-5" />
+                      <ShieldCheck className="w-5 h-5" color="#6b8f5e"/>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <h4 className="font-black text-[10px] uppercase tracking-[0.2em]">
+                        <h4 className="font-black text-primary text-xs uppercase tracking-[0.2em]">
                           Safety: {result.safe_to_use ? "Safe" : "Caution"}
                         </h4>
-                        <span className="px-2 py-0.5 bg-current/10 rounded-full text-[8px] font-black uppercase tracking-widest">
+                        <span className="px-2 py-0.5 bg-moss/30 text-primary rounded-full text-[8px] font-black uppercase tracking-widest">
                           AI Verified
                         </span>
                       </div>
-                      <p className="text-xs opacity-80 font-medium italic leading-tight">
+                      <p className="text-xs text-moss opacity-80 font-medium italic leading-tight">
                         {result.safe_to_use
                           ? "This item is safe to use or dispose of."
                           : "Please handle with care."}
@@ -642,27 +623,27 @@ export default function ScannerPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-slate-900">
                     <div className="glass-panel p-5 bg-slate-50 border-none flex items-center gap-4 rounded-[28px]">
-                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
+                      <div className="w-10 h-10 bg-moss text-white/80 rounded-xl flex items-center justify-center shadow-sm">
                         <TrendingDown className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                        <p className="text-[9px] font-black text-moss uppercase tracking-widest">
                           CO2 Offset
                         </p>
-                        <p className="text-lg font-black text-slate-900">
+                        <p className="text-lg font-black text-primary">
                           {result.co2_diverted_grams || 0}g
                         </p>
                       </div>
                     </div>
                     <div className="glass-panel p-5 bg-slate-50 border-none flex items-center gap-4 rounded-[28px]">
-                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
+                      <div className="w-10 h-10 bg-moss text-white/80 rounded-xl flex items-center justify-center shadow-sm">
                         <BarChart3 className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                        <p className="text-[9px] font-black text-moss uppercase tracking-widest">
                           Rarity Score
                         </p>
-                        <p className="text-lg font-black text-slate-900">
+                        <p className="text-lg font-black text-primary">
                           {result.rarity}
                         </p>
                       </div>
