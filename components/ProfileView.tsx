@@ -302,7 +302,7 @@ export default function ProfileView({ user, profileData, scanHistory, onBack, sh
           <div className="space-y-4">
             {earnedCertificates.map((level, i) => (
               <div key={i} className="bg-white border border-slate-100 rounded-4xl p-6 shadow-sm group">
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4 md:mb-6">
                   <div className={`w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center ${level.color}`}>
                     <level.icon className="w-8 h-8" />
                   </div>
@@ -313,12 +313,12 @@ export default function ProfileView({ user, profileData, scanHistory, onBack, sh
                 </div>
 
                 <div className="flex gap-2">
-                  <button onClick={() => setSelectedCertificate(level)} className="flex-1 py-3 bg-slate-50 text-slate-600 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-100 transition-all">
+                  <button onClick={() => setSelectedCertificate(level)} className="flex-1 py-3 bg-slate-50 text-slate-600 rounded-xl font-bold text-[10px] uppercase tracking-widest items-center justify-center gap-2 hover:bg-slate-100 transition-all hidden md:flex">
                     <FileText className="w-3 h-3" /> View
                   </button>
-                  <button className="flex-1 py-3 bg-accent/10 text-accent rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-accent/20 transition-all">
+                  {/* <button className="flex-1 py-3 bg-accent/10 text-accent rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-accent/20 transition-all">
                     <Download className="w-3 h-3" /> Download
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ))}
