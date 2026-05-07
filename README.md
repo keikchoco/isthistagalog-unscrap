@@ -19,7 +19,7 @@ Built for Filipino households looking for practical, rewarding entry points into
 - **Styling**: Tailwind CSS
 - **Animation**: Framer Motion
 - **AI**: Gemini 2.5 Pro Preview
-- **Backend & Auth**: MongoDB + Clerk
+- **Backend & Auth**: MongoDB + Better Auth
 - **Maps**: OpenStreetMap
 
 ---
