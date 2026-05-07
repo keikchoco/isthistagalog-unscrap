@@ -430,7 +430,7 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
               onClick={(event) => event.stopPropagation()}
               className="w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-3xl bg-white shadow-2xl flex flex-col"
             >
-              <div className="p-5 bg-primary text-white flex items-start justify-between rounded-t-3xl">
+              <div className="p-5 bg-linear-to-br from-[#6a4938] via-[#7c5a3f] to-[#8a6944] text-white flex items-start justify-between rounded-t-3xl">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/70">
                     Item suggestions
@@ -474,7 +474,7 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                   </div>
 
                   <div className="rounded-3xl bg-[#6B8F5E]/80 p-5 text-white">
-                    <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/70">
+                    <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white">
                       Stored scans
                     </p>
 
@@ -489,7 +489,7 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                               {scan.category || "General"}
                             </p>
 
-                            <p className="text-xs text-white/70">
+                            <p className="text-xs text-white/85">
                               +{scan.xp_reward || 0} XP · ₱
                               {(scan.peso_saved || 0).toFixed(2)} saved
                             </p>

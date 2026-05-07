@@ -273,7 +273,7 @@ export default function ScannerPage() {
 
   return (
     <div
-      className={`min-h-screen bg-transparent selection:bg-sprout font-sans text-ink pt-20 px-4 sm:pt-28 sm:px-10 transition-all duration-700 ${
+      className={`min-h-screen bg-transparent selection:bg-sprout font-sans text-ink pt-20 px-4 sm:pt-30 sm:px-10 transition-all duration-700 ${
         result ? "grid xl:grid-cols-2 gap-10" : "flex justify-center"
       }`}
     >
@@ -444,7 +444,7 @@ export default function ScannerPage() {
                     </button>
                   )}
                   <div>
-                    <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+                    <h2 className={`text-3xl font-bold tracking-tight ${showDetails ? "text-primary" : "text-slate-900"}`}>
                       {showDetails
                         ? selectedSuggestion?.title || "Recommendation Analysis"
                         : "The Analysis"}
@@ -511,16 +511,16 @@ export default function ScannerPage() {
                         )}
                       </div>
                       <div>
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-moss mb-1">
+                        <h4 className="font-bold text-xs uppercase tracking-wider text-page-bg mb-1">
                           {result.rarity || "Common"}
                         </h4>
-                        <p className="text-xl font-bold text-white/80 tracking-tight group-hover:text-accent transition-colors">
+                        <p className="text-xl text-page-bg tracking-tight transition-colors">
                           {result.item || "Material"}
                         </p>
                       </div>
                     </div>
                     <div className="text-left sm:text-right">
-                      <p className="text-xs font-bold text-moss uppercase tracking-wider mb-0.5 text-right">
+                      <p className="text-xs font-bold text-page-bg uppercase tracking-wider mb-0.5 text-right">
                         Analysis
                       </p>
                       <p className="font-bold text-white/80">
@@ -657,7 +657,7 @@ export default function ScannerPage() {
                   className="space-y-8"
                 >
                   <div className="glass-panel p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] bg-slate-50 border-none">
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <h3 className="text-xl sm:text-2xl font-black text-primary mb-6 flex items-center gap-3">
                       <RefreshCw className="w-6 h-6 text-accent" />
                       Recommendation Analysis
                     </h3>
@@ -671,7 +671,7 @@ export default function ScannerPage() {
                             <p className="text-xs font-black uppercase tracking-[0.2em] text-accent mb-1">
                               {suggestion.type}
                             </p>
-                            <h4 className="text-lg font-black text-slate-900 tracking-tight leading-none mb-2">
+                            <h4 className="text-lg font-black text-primary tracking-tight leading-none mb-2">
                               {suggestion.title}
                             </h4>
                             <p className="text-slate-600 font-medium leading-relaxed">
@@ -681,7 +681,7 @@ export default function ScannerPage() {
                               href={`https://www.youtube.com/results?search_query=${encodeURIComponent(suggestion.title)}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-red-500/10 text-red-600 hover:bg-red-500/20 text-sm font-bold rounded-lg transition-all"
+                              className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-moss text-page-bg hover:bg-red-500/20 text-sm font-bold rounded-lg transition-all"
                             >
                               <span>🎬 View on YouTube</span>
                               <ChevronRight className="w-3 h-3" />
