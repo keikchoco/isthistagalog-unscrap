@@ -287,11 +287,11 @@ export default function ScannerPage() {
       >
         <div className="w-full max-w-2xl flex flex-col">
           <header className="flex flex-col sm:flex-row sm:justify-between items-center mx-auto gap-4 text-center sm:text-left">
-            <h1 className="text-xl font-bold text-ink flex flex-row gap-2 mb-2">
+            <h1 className="text-2xl font-bold text-ink flex flex-row gap-2 mb-2">
               <Image
               src="/images/Unscrap Logo Text.png"
               alt="Unscrap Logo"
-              width={80}
+              width={100}
               height={60}
               className="object-contain"
               />
