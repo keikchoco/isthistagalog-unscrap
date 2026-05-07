@@ -430,7 +430,7 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
               onClick={(event) => event.stopPropagation()}
               className="w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-3xl bg-white shadow-2xl flex flex-col"
             >
-              <div className="p-5 bg-[#8B6F47] text-white flex items-start justify-between rounded-t-3xl">
+              <div className="p-5 bg-primary text-white flex items-start justify-between rounded-t-3xl">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/70">
                     Item suggestions
