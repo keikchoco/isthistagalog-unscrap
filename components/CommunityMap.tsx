@@ -237,8 +237,8 @@ export default function CommunityMap({ user }: { user: any }) {
   };
 
   return (
-    <div className="flex-1 relative flex flex-col min-h-[600px] rounded-[48px] overflow-hidden border border-bark/10 bg-surface shadow-2xl">
-      <div className="absolute top-0 left-0 right-0 z-[1000] p-4">
+    <div className="relative flex flex-col h-fit min-h-fit rounded-[48px] overflow-hidden border-4 border-primary bg-surface shadow-2xl">
+      {/* <div className="absolute top-0 left-0 right-0 z-[1000] p-4">
         <motion.div 
             initial={{ y: -50 }}
             animate={{ y: 0 }}
@@ -257,9 +257,9 @@ export default function CommunityMap({ user }: { user: any }) {
             <span className="text-xl font-black text-moss font-mono">82%</span>
           </div>
         </motion.div>
-      </div>
+      </div> */}
 
-      <div className="absolute top-24 left-6 z-[1000] flex flex-col gap-4 max-w-sm w-full">
+      <div className="absolute top-6 left-6 z-100 flex flex-col gap-4 max-w-sm w-full">
         <div className="bg-surface/90 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-bark/10 flex items-center gap-3 px-4">
           <Search className="w-4 h-4 text-muted" />
           <input 
@@ -296,7 +296,7 @@ export default function CommunityMap({ user }: { user: any }) {
         )}
 
         {user?.email && hasCurrentUserHub && (
-          <p className="bg-moss/10 text-moss border border-moss/20 px-3 py-2 rounded-xl text-xs font-semibold">
+          <p className="bg-white text-moss border border-moss/20 px-3 py-2 rounded-xl text-xs font-semibold">
             You already placed your hub point. Other users can still see it.
           </p>
         )}
@@ -344,16 +344,16 @@ export default function CommunityMap({ user }: { user: any }) {
                 <div className="flex gap-2 pt-1">
                   <button 
                     onClick={() => openOsmDirections(pin)}
-                    className="flex-1 text-white py-2 px-3 rounded-lg text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-bark transition-all shadow-sm"
+                    className="flex-1 text-white bg-primary py-2 px-3 rounded-lg text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-bark transition-all shadow-sm cursor-pointer"
                   >
                     <MapPin className="w-3 h-3" /> Directions
                   </button>
-                  <button 
+                  {/* <button 
                     onClick={() => handleShare(pin)}
                     className="w-10 h-8 bg-sprout/10 text-muted rounded-lg flex items-center justify-center hover:text-moss transition-colors"
                   >
                     {copiedId === pin._id ? <Clipboard className="w-3.5 h-3.5 text-moss" /> : <Share2 className="w-3.5 h-3.5" />}
-                  </button>
+                  </button> */}
                   {user?.email === pin.userId && (
                     <button
                       onClick={() => handleStartEdit(pin)}

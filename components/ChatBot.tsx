@@ -12,7 +12,7 @@ interface Message {
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: 'Hi! I am Scrappy, your eco-companion. I help you navigate The 3R Lab and turn your kitchen waste into wonder. Ask me anything about repurposing or living sustainably!' }
+    { role: 'bot', text: 'Hi! I am Scrappy, your eco-companion. I help you navigate your kitchen waste into wonder. Ask me anything about repurposing or living sustainably!' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

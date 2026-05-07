@@ -6,18 +6,16 @@ import ChatBot from "@/components/ChatBot";
 import AppNav from "@/components/AppNav";
 import localFont from "next/font/local";
 
-const alteHaasGrotesk = localFont({
-  variable: "--font-alte-haas-grotesk",
+const magnetik = localFont({
+  variable: "--font-magnetik",
   src: [
-    {
-      path: "./AlteHaasGroteskRegular.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "./AlteHaasGroteskBold.ttf",
-      weight: "700",
-    },
+    { path: "./Magnetik-Thin.otf", weight: "100", style: "normal" },
+    { path: "./Magnetik-Thin.otf", weight: "200", style: "normal" },
+    { path: "./Magnetik-Light.otf", weight: "300", style: "normal" },
+    { path: "./Magnetik-Regular.otf", weight: "400", style: "normal" },
+    { path: "./Magnetik-Medium.otf", weight: "500", style: "normal" },
+    { path: "./Magnetik-Bold.otf", weight: "700", style: "normal" },
+    { path: "./Magnetik-ExtraBold.otf", weight: "800", style: "normal" },
   ],
 });
 
@@ -33,11 +31,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${alteHaasGrotesk.className} ${alteHaasGrotesk.variable}`}>
+      <body className={`${magnetik.className} ${magnetik.variable}`}>
         <Toaster />
         <AppNav />
         {children}
-        {/* <ChatBot /> */}
+        <ChatBot />
       </body>
     </html>
   );

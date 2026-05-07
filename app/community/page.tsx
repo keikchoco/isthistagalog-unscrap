@@ -6,7 +6,7 @@ import { authClient } from '@/lib/auth-client';
 
 const CommunityMap = dynamic(() => import('@/components/CommunityMap'), {
   ssr: false,
-  loading: () => <div className="w-full h-[600px] bg-sprout/10 animate-pulse rounded-[48px]" />,
+  loading: () => <div className="w-full h-100 bg-sprout/10 animate-pulse rounded-[48px] border-2 border-moss" />,
 });
 
 export default function CommunityPage() {
@@ -19,8 +19,8 @@ export default function CommunityPage() {
   }, [sessionUser?.email, sessionUser?.name]);
 
   return (
-    <div className="min-h-screen bg-page-bg selection:bg-sprout flex flex-col font-sans text-ink">
-      <main className="pt-28 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full flex flex-col gap-8 min-h-[70vh]">
+    <div className="min-h-screen bg-white selection:bg-sprout flex flex-col font-sans text-ink">
+      <main className="pt-28 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full flex flex-col gap-8 min-h-fit">
         <CommunityMap user={user} />
       </main>
     </div>

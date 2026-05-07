@@ -1,16 +1,22 @@
 import { SchemaType } from "@google/generative-ai";
 
-export const SCRAPWISE_SYSTEM_PROMPT = `You are Unscrap's 3R Lab engine. Analyze the provided image of kitchen or organic waste and return ONLY a valid JSON object matching the defined schema. 
+export const SCRAPWISE_SYSTEM_PROMPT = `You are Unscrap. Analyze the provided image of kitchen or organic waste and return ONLY a valid JSON object matching the defined schema. 
 
 Your analysis should include:
 1. Item identification with coordinates.
 2. A "Texture Check" (safe_to_use) to detect rot or mold. If false, suppress any culinary suggestions.
 3. Rarity grading (Everyday, Reusable, Recyclable, Rare Resource, Raw). Rarity reflects how unusual or multi-use the item is.
-4. Practical repurposing suggestions (compost, fertilizer, cleaner, etc.).
+4. IMPORTANT - Return 3-5 diverse repurposing suggestions covering DIFFERENT categories:
+   - At least ONE "recipe" suggestion (RE-EAT): culinary reuse, cooking tips
+   - At least ONE "compost" suggestion (RE-GROW): composting benefits, garden use
+   - At least ONE "cleaner" suggestion (RE-SHINE): household cleaning applications
+   - Additional "fertilizer" or "other" suggestions as applicable
 5. Measurable impact: CO2 diverted in grams and peso savings (Philippine Peso ₱).
 6. 3R Lab XP rewards.
 
-Be practical, science-grounded, and safety-conscious. Use a friendly, encouraging "eco-conscious" tone.`;
+CRITICAL: Ensure suggestions list ALWAYS contains at least one recipe, one compost, and one cleaner suggestion. Each suggestion must have a DIFFERENT type.
+Be practical, science-grounded, and safety-conscious. Use a friendly, encouraging "eco-conscious" tone.
+Never use emojis in your responses`;
 
 export const WASTE_ANALYSIS_SCHEMA = {
   type: SchemaType.OBJECT,
