@@ -108,7 +108,7 @@ export default function Home() {
 
           <div className="relative z-10 space-y-6 text-center lg:text-left sm:space-y-8">
             <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-primary sm:text-5xl md:text-6xl lg:text-5xl lg:leading-[1.1] lg:tracking-tight xl:text-7xl">
-              Turn kitchen waste <br className="hidden xl:block"/>into <span className="text-moss underline underline-offset-8 decoration-4 lg:text-8xl">Wonder.</span>
+              Turn kitchen waste <br className="block"/>into <span className="text-moss underline underline-offset-8 decoration-4 lg:text-8xl">Wonder.</span>
             </h1>
             <p className="mx-auto max-w-xl text-base leading-relaxed text-muted sm:text-lg lg:mx-0">
               Snap a pic of vegetable peels, eggshells, or coffee grounds. Our

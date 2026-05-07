@@ -21,6 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
 
 interface AnalysisResult {
   item: string;
@@ -273,30 +274,34 @@ export default function ScannerPage() {
 
   return (
     <div
-      className={`min-h-screen bg-transparent selection:bg-sprout font-sans text-ink pt-20 px-4 sm:pt-30 sm:px-10 transition-all duration-700 ${
+      className={`min-h-screen bg-transparent selection:bg-sprout font-sans text-ink pt-20 px-4 pt-30 sm:px-10 transition-all duration-700 ${
         result ? "grid xl:grid-cols-2 gap-10" : "flex justify-center"
       }`}
     >
       <main
-        className={`pb-12 px-0 sm:px-6 max-w-7xl w-full flex flex-col ${
+        className={`px-0 sm:px-6 max-w-7xl w-full flex flex-col ${
           result
             ? "items-start justify-start"
             : "items-center justify-center flex-1 w-full"
         }`}
       >
-        <div className="w-full max-w-2xl flex flex-col gap-5 sm:gap-6">
-          {/* <header className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 text-center sm:text-left">
-            <div className="w-12 h-12 bg-moss/5 rounded-2xl flex items-center justify-center">
-              <Package className="w-6 h-6 text-moss" />
-            </div>
-            <h1 className="text-xl font-bold text-ink">
-              <span className="text-primary">Un</span>
-              <span className="text-moss">Scrap</span> Scanner
+        <div className="w-full max-w-2xl flex flex-col">
+          <header className="flex flex-col sm:flex-row sm:justify-between items-center mx-auto gap-4 text-center sm:text-left">
+            <h1 className="text-xl font-bold text-ink flex flex-row gap-2 mb-2">
+              <Image
+              src="/images/Unscrap Logo Text.png"
+              alt="Unscrap Logo"
+              width={80}
+              height={60}
+              className="object-contain"
+              />
+
+              Scanner
             </h1>
             <div />
-          </header> */}
+          </header>
 
-          <div className="relative aspect-square w-full bg-ink rounded-[28px] sm:rounded-[48px] overflow-hidden shadow-2xl border-3 sm:border-4 border-primary">
+          <div className="relative aspect-square w-full bg-ink rounded-[28px] sm:rounded-[48px] overflow-hidden shadow-2xl border-3 sm:border-4 border-primary mb-4 lg:mb-6">
             {!image && !isCameraActive ? (
               <div
                 className="absolute inset-0 flex flex-col items-center justify-center gap-6 cursor-pointer group"
@@ -392,7 +397,7 @@ export default function ScannerPage() {
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 mb-3">
             <button
               onClick={() => fileInputRef.current?.click()}
               className="btn-secondary flex-1 justify-center"
@@ -429,7 +434,7 @@ export default function ScannerPage() {
             className="w-full max-w-3xl flex flex-col gap-1 transition-all duration-700 mt-4 lg:mt-0 lg:sticky lg:top-8 self-start"
           >
             <header className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 text-center sm:text-left">
-              <h3 className="text-3xl font-bold text-moss">Results</h3>
+              <h3 className="text-3xl font-bold text-moss mb-2">Results</h3>
             </header>
 
             <div className="bg-white rounded-[28px] sm:rounded-[48px] shadow-[0_20px_80px_rgba(0,0,0,0.06)] border border-slate-100 p-5 sm:p-10 space-y-8 sm:space-y-10">
@@ -498,7 +503,7 @@ export default function ScannerPage() {
               {!showDetails ? (
                 <>
                   <div className="bg-linear-to-br from-[#6a4938] via-[#7c5a3f] to-[#8a6944] p-6 rounded-4xl flex flex-col sm:flex-row items-center justify-between group gap-4 text-slate-900 text-sm">
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                       <div
                         className={`size-15 rounded-2xl flex items-center justify-center text-3xl border text-white`}
                       >
@@ -519,8 +524,8 @@ export default function ScannerPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-left sm:text-right">
-                      <p className="text-xs font-bold text-page-bg uppercase tracking-wider mb-0.5 text-right">
+                    <div className="text-center sm:text-right">
+                      <p className="text-xs font-bold text-page-bg uppercase tracking-wider mb-0.5">
                         Analysis
                       </p>
                       <p className="font-bold text-white/80">
