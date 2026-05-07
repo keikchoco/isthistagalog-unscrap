@@ -91,10 +91,10 @@ export default function Home() {
   const progressPercent = Math.round((currentRankIndex + nextRankProgressPercent / 100) * (100 / (rankOrder.length - 1)));
 
   return (
-    <div className="min-h-screen bg-white selection:bg-sprout flex flex-col font-sans text-ink">
-      <section className="mt-20 overflow-hidden border border-bark/10 bg-surface shadow-[0_20px_60px_rgba(0,0,0,0.03)] sm:mt-24">
+    <div className="min-h-screen bg-linear-to-b from-[#6B8F5E]/30 to-white selection:bg-sprout flex flex-col font-sans text-ink">
+      <section className="relative mt-20 overflow-hidden border border-bark/10 bg-surface shadow-[0_20px_60px_rgba(0,0,0,0.03)] sm:mt-24 lg:mt-24 lg:p-12">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-linear-to-b from-page-bg via-page-bg/80 to-transparent lg:bg-linear-to-r lg:from-page-bg lg:from-30% lg:via-page-bg/80 lg:to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-b from-page-bg via-page-bg/80 to-transparent lg:bg-linear-to-r lg:from-page-bg lg:from-30% lg:to-70% lg:to-transparent" />
           <Image
             src={"/images/BG.png"}
             alt="Unscrap Background"
@@ -103,12 +103,12 @@ export default function Home() {
             className="h-full w-full object-cover object-center opacity-25 sm:opacity-35 lg:opacity-100"
           />
         </div>
-        <div className="relative mx-auto grid min-h-[calc(100vh-8rem)] max-w-7xl items-center gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:px-12 lg:py-20">
-          <div className="absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-moss/5 blur-[100px] sm:h-80 sm:w-80" />
+        <div className="relative mx-auto grid min-h-dvh w-full items-center gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:min-h-0 lg:grow lg:grid-cols-2 lg:max-w-370 lg:m-30 lg:gap-12 lg:px-0 lg:py-0">
+          <div className="absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-moss/5 blur-[100px] lg:h-96 lg:w-96" />
 
           <div className="relative z-10 space-y-6 text-center lg:text-left sm:space-y-8">
-            <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-primary sm:text-5xl xl:text-6xl">
-              Turn kitchen waste<br className="hidden sm:block" /> into <span className="text-moss underline underline-offset-8 decoration-4 md:text-8xl">Wonder.</span>
+            <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-primary sm:text-5xl md:text-6xl lg:text-5xl lg:leading-[1.1] lg:tracking-tight xl:text-7xl">
+              Turn kitchen waste <br className="hidden xl:block"/>into <span className="text-moss underline underline-offset-8 decoration-4 lg:text-8xl">Wonder.</span>
             </h1>
             <p className="mx-auto max-w-xl text-base leading-relaxed text-muted sm:text-lg lg:mx-0">
               Snap a pic of vegetable peels, eggshells, or coffee grounds. Our
@@ -131,9 +131,10 @@ export default function Home() {
               </Link> */}
             </div>
           </div>
-          <div className="relative z-10 hidden lg:block" />
         </div>
       </section>
+
+      
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-6 lg:pt-24">
         <section className="pb-4 custom-scrollbar">
           <div className="grid gap-6 lg:grid-cols-2">
