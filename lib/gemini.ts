@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SCRAPWISE_SYSTEM_PROMPT, WASTE_ANALYSIS_SCHEMA } from "./constants";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const DEFAULT_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
 
 export interface AnalysisResult {
   item: string;
@@ -23,8 +24,9 @@ export interface AnalysisResult {
 }
 
 export async function analyzeWaste(base64Image: string, mimeType: string): Promise<AnalysisResult> {
+  const modelId = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: modelId,
     systemInstruction: SCRAPWISE_SYSTEM_PROMPT,
     generationConfig: {
       responseMimeType: "application/json",

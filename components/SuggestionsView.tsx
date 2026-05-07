@@ -14,6 +14,7 @@ interface ScanItem {
   peso_saved: number;
   xp_reward: number;
   safe_to_use: boolean;
+  imageUrl?: string;
   timestamp: any;
 }
 
@@ -25,7 +26,7 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [rarityFilter, setRarityFilter] = useState<string>('All');
 
-  const knownItems = [
+  const knownItems: Array<{ name: string; rarity: string; icon: React.ReactElement; imageUrl?: string }> = [
     { name: "Banana Peel", rarity: "Everyday", icon: <Package className="w-full h-full" /> },
     { name: "Coffee Grounds", rarity: "Everyday", icon: <Package className="w-full h-full" /> },
     { name: "Eggshells", rarity: "Everyday", icon: <Package className="w-full h-full" /> },
@@ -164,8 +165,19 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                   </div>
                   
                   <div className="flex-1 flex items-center justify-center p-6 text-sprout group-hover:text-moss group-hover:scale-110 transition-all duration-500">
-                    <div className="w-16 h-16">
-                      {knownItems.find(k => k.name.toLowerCase() === scan.item?.toLowerCase())?.icon || <Package className="w-full h-full" />}
+                    <div className="size-36 overflow-hidden rounded-md">
+                      {scan.imageUrl ? (
+                        <img src={scan.imageUrl} alt={scan.item} className="w-full h-full object-cover" />
+                      ) : (
+                        (() => {
+                          const known = knownItems.find(k => k.name.toLowerCase() === scan.item?.toLowerCase());
+                          return known?.imageUrl ? (
+                            <img src={known.imageUrl} alt={known.name} className="w-full h-full object-cover" />
+                          ) : (
+                            known?.icon || <Package className="w-full h-full" />
+                          );
+                        })()
+                      )}
                     </div>
                   </div>
 
@@ -185,8 +197,12 @@ export default function SuggestionsView({ history }: SuggestionsViewProps) {
                     animate={{ opacity: 1 }}
                     className="bg-sprout/5 border border-dashed border-bark/20 rounded-3xl aspect-[3/4] flex flex-col items-center justify-center gap-4 opacity-40 group"
                 >
-                    <div className="w-20 h-20 bg-surface border border-bark/10 rounded-full flex items-center justify-center text-sprout">
-                        <div className="w-10 h-10">{item.icon}</div>
+                    <div className="w-20 h-20 bg-surface border border-bark/10 rounded-full flex items-center justify-center text-sprout overflow-hidden">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-10 h-10">{item.icon}</div>
+                        )}
                     </div>
                     <div className="text-center">
                         <p className="text-[10px] font-bold text-muted uppercase tracking-widest">{item.rarity}</p>

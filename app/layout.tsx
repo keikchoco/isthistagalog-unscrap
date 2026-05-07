@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "sonner";
 import ChatBot from "@/components/ChatBot";
 import AppNav from "@/components/AppNav";
 
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <Toaster />
         <AppNav />
         {children}
         <ChatBot />

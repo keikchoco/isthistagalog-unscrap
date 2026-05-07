@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogOut, Trash2, UserPlus } from 'lucide-react';
+import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
 
 type RouteKey = 'home' | 'scanner' | 'suggestions' | 'impact' | 'community';
@@ -42,23 +43,43 @@ export default function AppNav() {
     setAuthError(null);
 
     try {
+      let response: any;
+      
       if (authMode === 'sign-in') {
-        await authClient.signIn.email({
+        response = await authClient.signIn.email({
           email: authEmail,
           password: authPassword,
         });
       } else {
-        await authClient.signUp.email({
+        response = await authClient.signUp.email({
           name: authName,
           email: authEmail,
           password: authPassword,
         });
       }
 
+      // Check if there's an error in the response
+      if (response?.error) {
+        const errorMessage = response.error.message || 'Authentication failed.';
+        setAuthError(errorMessage);
+        toast.error(errorMessage);
+        return;
+      }
+
+      // Only show success and close modal if no error
+      if (authMode === 'sign-in') {
+        toast.success('Signed in successfully!');
+      } else {
+        toast.success('Account created successfully!');
+      }
       setIsAuthOpen(false);
       setAuthPassword('');
+      setAuthEmail('');
+      setAuthName('');
     } catch (error: any) {
-      setAuthError(error?.message || 'Authentication failed.');
+      const errorMessage = error?.message || 'Authentication failed.';
+      setAuthError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -66,6 +87,7 @@ export default function AppNav() {
 
   const handleLogout = async () => {
     await authClient.signOut();
+    toast.success('Signed out successfully!');
   };
 
   return (
