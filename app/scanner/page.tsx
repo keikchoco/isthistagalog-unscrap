@@ -274,8 +274,8 @@ export default function ScannerPage() {
 
   return (
     <div
-      className={`min-h-screen bg-transparent selection:bg-sprout font-sans text-ink pt-20 px-4 pt-30 sm:px-10 transition-all duration-700 ${
-        result ? "grid xl:grid-cols-2 gap-10" : "flex justify-center"
+      className={`min-h-screen bg-transparent selection:bg-sprout font-sans text-ink px-4 pt-30 sm:px-10 transition-all duration-700 ${
+        result ? "grid xl:grid-cols-2 lg:gap-10" : "flex justify-center"
       }`}
     >
       <main
@@ -434,7 +434,7 @@ export default function ScannerPage() {
             className="w-full max-w-3xl flex flex-col gap-1 transition-all duration-700 mt-4 lg:mt-0 lg:sticky lg:top-8 self-start"
           >
             <header className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 text-center sm:text-left">
-              <h3 className="text-3xl font-bold text-moss mb-2">Results</h3>
+              <h3 className="text-4xl font-bold text-moss mb-4">Results</h3>
             </header>
 
             <div className="bg-white rounded-[28px] sm:rounded-[48px] shadow-[0_20px_80px_rgba(0,0,0,0.06)] border border-slate-100 p-5 sm:p-10 space-y-8 sm:space-y-10">
