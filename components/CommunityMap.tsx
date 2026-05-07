@@ -90,7 +90,7 @@ export default function CommunityMap({ user }: { user: any }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user?.email || 'anonymous',
-          userName: user?.displayName || 'User',
+          userName: user?.name || user?.displayName || 'User',
           title: newPinTitle,
           type: newPinType,
           description: newPinDescription || 'Shared via Unscrap community',

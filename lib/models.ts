@@ -30,6 +30,7 @@ export interface IScan extends Document {
   peso_saved: number;
   xp_reward: number;
   safe_to_use: boolean;
+  imageUrl?: string;
   timestamp: Date;
 }
 
@@ -43,6 +44,7 @@ const ScanSchema: Schema = new Schema({
   peso_saved: { type: Number },
   xp_reward: { type: Number, default: 0 },
   safe_to_use: { type: Boolean, default: true },
+  imageUrl: { type: String },
   timestamp: { type: Date, default: Date.now },
 });
 

@@ -6,6 +6,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
+    const name = searchParams.get('name');
 
     if (!email) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 });
@@ -15,10 +16,9 @@ export async function GET(request: Request) {
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Auto-create for demo purposes if not found
       user = await User.create({
         email,
-        displayName: email.split('@')[0],
+        displayName: name || email.split('@')[0],
         rank: 'Reducer',
         totalXP: 0,
         impactScore: 0,

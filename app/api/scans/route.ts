@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 import { analyzeWaste } from '@/lib/gemini';
 import dbConnect from '@/lib/dbConnect';
 import { Scan, User } from '@/lib/models';
@@ -12,6 +13,17 @@ export async function POST(request: Request) {
     }
 
     const analysis = await analyzeWaste(image, mimeType);
+
+    const imageBuffer = Buffer.from(image, 'base64');
+    const blob = await put(
+      `scans/${userId || 'anonymous'}/${Date.now()}.jpg`,
+      imageBuffer,
+      {
+        access: 'public',
+        contentType: mimeType,
+        addRandomSuffix: true,
+      }
+    );
     
     await dbConnect();
 
@@ -19,12 +31,15 @@ export async function POST(request: Request) {
     const newScan = await Scan.create({
       ...analysis,
       userId,
+      imageUrl: blob.url,
       timestamp: new Date()
     });
 
-    // Update user stats (mocked user for now)
+    const resolvedUserId = userId || 'anonymous';
+
+    // Update user stats for the authenticated user or anonymous fallback.
     await User.findOneAndUpdate(
-      { email: 'manaigeurie20@gmail.com' }, // Using provided user email as default for now
+      { email: resolvedUserId },
       { 
         $inc: { 
           totalXP: analysis.xp_reward,
@@ -35,7 +50,11 @@ export async function POST(request: Request) {
       { upsert: true }
     );
 
-    return NextResponse.json(analysis);
+    return NextResponse.json({
+      ...analysis,
+      imageUrl: blob.url,
+      scanId: newScan._id,
+    });
   } catch (error) {
     console.error('Scan API error:', error);
     return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });

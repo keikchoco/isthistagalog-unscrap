@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ChatBot from "@/components/ChatBot";
+import AppNav from "@/components/AppNav";
 
 export const metadata: Metadata = {
   title: "Unscrap — Turn kitchen waste into wonder",
@@ -14,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <AppNav />
         {children}
+        <ChatBot />
       </body>
     </html>
   );
