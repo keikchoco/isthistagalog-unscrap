@@ -9,6 +9,7 @@ import {
   DollarSign,
   Leaf,
   Package,
+  PiggyBank,
   Scale,
   ShieldCheck,
   Sparkles,
@@ -91,34 +92,34 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white selection:bg-sprout flex flex-col font-sans text-ink">
-      <section className="mt-24 bg-surface border border-bark/10 p-12 relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.03)]">
-        <div>
-          <div className="bg-linear-to-t lg:bg-linear-to-r from-page-bg from-30% to-70% to-transparent absolute top-0 left-0 w-full h-full z-2" />
+      <section className="mt-20 overflow-hidden border border-bark/10 bg-surface shadow-[0_20px_60px_rgba(0,0,0,0.03)] sm:mt-24">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-linear-to-b from-page-bg via-page-bg/80 to-transparent lg:bg-linear-to-r lg:from-page-bg lg:from-30% lg:via-page-bg/80 lg:to-transparent" />
           <Image
             src={"/images/BG.png"}
             alt="Unscrap Background"
             width={1920}
             height={900}
-            className="absolute top-0 left-0 w-full h-full object-cover "
+            className="h-full w-full object-cover object-center opacity-25 sm:opacity-35 lg:opacity-100"
           />
         </div>
-        <div className="grow grid grid-cols-2 max-w-370 m-30 gap-12 items-center w-full relative">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-moss/5 blur-[100px] -translate-y-1/2 translate-x-1/2" />
+        <div className="relative mx-auto grid min-h-[calc(100vh-8rem)] max-w-7xl items-center gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:px-12 lg:py-20">
+          <div className="absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-moss/5 blur-[100px] sm:h-80 sm:w-80" />
 
-          <div className="space-y-8 relative z-10">
-            <h1 className="text-5xl md:text-7xl font-bold text-primary leading-[1.1] tracking-tight">
-              Turn kitchen waste into <span className="text-moss underline md:text-8xl">Wonder.</span>
+          <div className="relative z-10 space-y-6 text-center lg:text-left sm:space-y-8">
+            <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-primary sm:text-5xl xl:text-6xl">
+              Turn kitchen waste<br className="hidden sm:block" /> into <span className="text-moss underline underline-offset-8 decoration-4 md:text-8xl">Wonder.</span>
             </h1>
-            <p className="text-lg text-muted max-w-xl leading-relaxed">
+            <p className="mx-auto max-w-xl text-base leading-relaxed text-muted sm:text-lg lg:mx-0">
               Snap a pic of vegetable peels, eggshells, or coffee grounds. Our
               AI instantly suggests compost recipes, natural fertilizers, and
               DIY cleaners.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:flex-wrap sm:justify-center lg:justify-start">
               <Link
                 href="/scanner"
-                className="group px-8 py-4 bg-primary text-white rounded-2xl font-bold text-sm shadow-[0_10px_30px_rgba(92,64,51,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+                className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-sm font-bold text-white shadow-[0_10px_30px_rgba(92,64,51,0.2)] transition-all hover:scale-105 active:scale-95 sm:w-auto"
               >
                 <Camera className="w-5 h-5" /> Open Scanner
               </Link>
@@ -130,35 +131,36 @@ export default function Home() {
               </Link> */}
             </div>
           </div>
+          <div className="relative z-10 hidden lg:block" />
         </div>
       </section>
-      <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full flex flex-col gap-12">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-6 lg:pt-24">
         <section className="pb-4 custom-scrollbar">
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid gap-6 lg:grid-cols-2">
             {[
               {
-                label: "Total 3R Lab XP",
+                label: "Scrap XP",
                 val: (profileData?.totalXP || 0).toLocaleString(),
                 icon: Zap,
                 color: "text-primary",
                 bg: "bg-sprout",
               },
               {
-                label: "Impact Score",
+                label: "Saving",
                 val: `₱${impactScore.toLocaleString()}`,
-                icon: DollarSign,
+                icon: PiggyBank,
                 color: "text-bark",
                 bg: "bg-sprout/20",
               },
               {
-                label: "Matter Diverted",
+                label: "Scraps Rescued",
                 val: `${(profileData?.matterDiverted || 0).toFixed(2)}kg`,
                 icon: Leaf,
                 color: "text-moss",
                 bg: "bg-sprout/30",
               },
               {
-                label: "Global Stability",
+                label: "Eco Score",
                 val: "94%",
                 icon: ShieldCheck,
                 color: "text-primary",
