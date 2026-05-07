@@ -3,24 +3,25 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Leaf, LogOut, Trash2, UserPlus, X } from "lucide-react";
+import { Leaf, LogOut, Menu, User, UserPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
-import { p } from "framer-motion/client";
 
-type RouteKey = "home" | "scanner" | "library" | "impact" | "community";
+type RouteKey = "home" | "scanner" | "library" | "impact" | "community" | "profile";
 
 const navItems: Array<{ id: RouteKey; label: string; href: string }> = [
   { id: "scanner", label: "Scanner", href: "/scanner" },
   { id: "library", label: "Library", href: "/library" },
-  { id: "impact", label: "Impact", href: "/impact" },
+  // { id: "impact", label: "Impact", href: "/impact" },
   { id: "community", label: "Community", href: "/community" },
+  { id: "profile", label: "Profile", href: "/profile" },
 ];
 
 export default function AppNav() {
   const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [authName, setAuthName] = useState("");
@@ -34,6 +35,7 @@ export default function AppNav() {
     if (path.startsWith("/library")) return "library";
     if (path.startsWith("/impact")) return "impact";
     if (path.startsWith("/community")) return "community";
+    if (path.startsWith("/profile")) return "profile";
     return "home";
   };
 
@@ -89,6 +91,7 @@ export default function AppNav() {
 
   const handleLogout = async () => {
     await authClient.signOut();
+    setIsMobileMenuOpen(false);
     toast.success("Signed out successfully!");
   };
 
@@ -100,17 +103,14 @@ export default function AppNav() {
             href="/"
             className="flex items-center gap-3 cursor-pointer group shrink-0"
           >
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <div className="w-24 h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <Image
-                src={"/images/Unscrap White.png"}
+                src={"/images/Unscrap Logo Text.png"}
                 alt="Unscrap Logo"
-                width={20}
-                height={20}
+                width={600}
+                height={30}
               />
             </div>
-            <span className="text-xl font-bold tracking-tight text-primary">
-              Un<span className="text-moss">Scrap</span>
-            </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8 font-bold uppercase text-primary text-sm">
@@ -118,7 +118,7 @@ export default function AppNav() {
               href="/"
               className={
                 activeRoute === "home"
-                  ? ""
+                  ? "text-moss"
                   : "hover:text-moss transition-colors"
               }
             >
@@ -129,6 +129,7 @@ export default function AppNav() {
             </Link>
             {navItems.map((item) => {
               if (item.id === "library" && !session?.user) return null;
+              if (item.id === "profile" && !session?.user) return null;
               return (
                 <Link
                   key={item.id}
@@ -153,6 +154,15 @@ export default function AppNav() {
           </div> */}
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              className="inline-flex md:hidden items-center justify-center rounded-xl border border-bark/20 bg-surface px-3 py-2 text-primary"
+              aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
             {session?.user ? (
               <div className="flex items-center gap-3 rounded-2xl border border-bark/10 bg-surface/90 px-4 py-3 shadow-lg backdrop-blur-xl">
                 <div className="hidden sm:flex flex-col items-end">
@@ -163,6 +173,13 @@ export default function AppNav() {
                     {session.user.name || session.user.email}
                   </span>
                 </div>
+                <Link
+                  href="/profile"
+                  className="p-2 text-muted hover:text-moss transition-colors"
+                  aria-label="Edit profile"
+                >
+                  <User className="w-5 h-5" />
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="p-2 text-muted hover:text-red-500 transition-colors"
@@ -186,6 +203,58 @@ export default function AppNav() {
           </div>
         </div>
       </nav>
+
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-90 bg-black/35 backdrop-blur-sm md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
+          <div
+            className="absolute inset-x-4 top-24 rounded-3xl border border-bark/10 bg-page-bg p-6 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex flex-col gap-2 text-sm font-bold uppercase tracking-wide text-primary">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={activeRoute === "home" ? "rounded-xl bg-sprout/20 px-4 py-3 text-moss" : "rounded-xl px-4 py-3 hover:bg-sprout/10"}
+              >
+                Home
+              </Link>
+
+              {navItems.map((item) => {
+                if (item.id === "library" && !session?.user) return null;
+                if (item.id === "profile" && !session?.user) return null;
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={
+                      activeRoute === item.id
+                        ? "rounded-xl bg-sprout/20 px-4 py-3 text-moss"
+                        : "rounded-xl px-4 py-3 hover:bg-sprout/10"
+                    }
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {!session?.user && (
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setAuthMode("sign-in");
+                  setIsAuthOpen(true);
+                }}
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20"
+              >
+                <UserPlus className="w-4 h-4" /> Sign In
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {isAuthOpen && (
         <div className="fixed inset-0 z-150 bg-black/30 backdrop-blur-sm flex items-center justify-center px-4">
