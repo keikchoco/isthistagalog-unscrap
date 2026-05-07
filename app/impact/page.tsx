@@ -34,7 +34,7 @@ export default function ImpactPage() {
 
   return (
     <div className="min-h-screen bg-page-bg selection:bg-sprout flex flex-col font-sans text-ink">
-      <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full space-y-12">
+      <main className="pt-28 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full space-y-12">
         <div className="grid md:grid-cols-3 gap-6">
           {[
             { label: 'Waste Diverted', val: `${totalSaved.toFixed(2)}kg`, icon: Leaf, color: 'text-moss', bg: 'bg-sprout/30' },

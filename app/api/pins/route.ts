@@ -41,3 +41,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Create failed' }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const data = await request.json();
+    await dbConnect();
+
+    const { id, userId, title, description, location } = data || {};
+    if (!id || !userId) {
+      return NextResponse.json({ error: 'Pin id and userId are required' }, { status: 400 });
+    }
+
+    const pin = await Pin.findById(id);
+    if (!pin) {
+      return NextResponse.json({ error: 'Pin not found' }, { status: 404 });
+    }
+
+    // Only pin owner can edit.
+    if (pin.userId !== userId) {
+      return NextResponse.json({ error: 'You can only edit your own hub point.' }, { status: 403 });
+    }
+
+    if (typeof title === 'string' && title.trim()) {
+      pin.title = title.trim();
+    }
+    if (typeof description === 'string') {
+      pin.description = description.trim();
+    }
+    if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
+      pin.location = { lat: location.lat, lng: location.lng };
+    }
+
+    await pin.save();
+    return NextResponse.json(pin);
+  } catch (error) {
+    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+  }
+}

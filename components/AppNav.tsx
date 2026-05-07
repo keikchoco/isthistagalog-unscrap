@@ -6,12 +6,13 @@ import { usePathname } from 'next/navigation';
 import { LogOut, Trash2, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import Image from 'next/image';
 
-type RouteKey = 'home' | 'scanner' | 'suggestions' | 'impact' | 'community';
+type RouteKey = 'home' | 'scanner' | 'library' | 'impact' | 'community';
 
 const navItems: Array<{ id: RouteKey; label: string; href: string }> = [
   { id: 'scanner', label: 'Scanner', href: '/scanner' },
-  { id: 'suggestions', label: 'Suggestions', href: '/suggestions' },
+  { id: 'library', label: 'Library', href: '/library' },
   { id: 'impact', label: 'Impact', href: '/impact' },
   { id: 'community', label: 'Community', href: '/community' },
 ];
@@ -29,7 +30,7 @@ export default function AppNav() {
 
   const getRouteKey = (path: string): RouteKey => {
     if (path.startsWith('/scanner')) return 'scanner';
-    if (path.startsWith('/suggestions')) return 'suggestions';
+    if (path.startsWith('/suggestions')) return 'library';
     if (path.startsWith('/impact')) return 'impact';
     if (path.startsWith('/community')) return 'community';
     return 'home';
@@ -92,18 +93,24 @@ export default function AppNav() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-[100] bg-surface/80 backdrop-blur-xl border-b border-bark/10 px-6 py-4">
+      <nav className="fixed top-0 left-0 right-0 z-100 bg-surface/80 backdrop-blur-xl border-b border-bark/10 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
           <Link href="/" className="flex items-center gap-3 cursor-pointer group shrink-0">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-              <Trash2 className="text-white w-6 h-6" />
+              <Image 
+              src={"/images/Unscrap White.png"}
+              alt="Unscrap Logo"
+              width={20}
+              height={20}
+              />
             </div>
-            <span className="text-xl font-bold tracking-tight text-ink">Unscrap</span>
+            <span className="text-xl font-bold tracking-tight text-primary">Un<span className="text-moss">Scrap</span></span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted">
-            <Link href="/" className={activeRoute === 'home' ? 'text-moss' : 'hover:text-moss transition-colors'}>
+          <div className="hidden md:flex items-center gap-8 font-bold uppercase text-primary text-sm">
+            <Link href="/" className={activeRoute === 'home' ? '' : 'hover:text-moss transition-colors'}>
               Home
+              {activeRoute === 'home' && <span className="block h-1 w-full bg-moss rounded-full mt-1" />}
             </Link>
             {navItems.map((item) => (
               <Link
@@ -112,6 +119,7 @@ export default function AppNav() {
                 className={activeRoute === item.id ? 'text-moss' : 'hover:text-moss transition-colors'}
               >
                 {item.label}
+                {activeRoute === item.id && <span className="block h-1 w-full bg-moss rounded-full mt-1" />}
               </Link>
             ))}
           </div>
@@ -148,8 +156,8 @@ export default function AppNav() {
       </nav>
 
       {isAuthOpen && (
-        <div className="fixed inset-0 z-[150] bg-black/30 backdrop-blur-sm flex items-center justify-center px-4">
-          <div className="w-full max-w-md rounded-[32px] bg-surface border border-bark/10 shadow-2xl p-6">
+        <div className="fixed inset-0 z-150 bg-black/30 backdrop-blur-sm flex items-center justify-center px-4">
+          <div className="w-full max-w-md rounded-4xl bg-surface border border-bark/10 shadow-2xl p-6">
             <div className="flex items-start justify-between gap-4 mb-6">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted">Better Auth</p>

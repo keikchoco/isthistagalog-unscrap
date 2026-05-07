@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { authClient } from '@/lib/auth-client';
+import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);
@@ -38,7 +39,9 @@ export default function Home() {
 
       setUser({ email: sessionUser.email, displayName: sessionUser.name });
 
-      const res = await fetch(`/api/user?email=${sessionUser.email}&name=${encodeURIComponent(sessionUser.name || sessionUser.email.split('@')[0])}`);
+      const res = await fetch(
+        `/api/user?email=${sessionUser.email}&name=${encodeURIComponent(sessionUser.name || sessionUser.email.split("@")[0])}`,
+      );
       const data = await res.json();
       setProfileData(data);
 
@@ -54,25 +57,47 @@ export default function Home() {
 
   const userRank = profileData?.rank || "Reducer";
   const impactScore = profileData?.impactScore || 0;
+  const totalXP = profileData?.totalXP || 0;
+  const rankOrder = ["Reducer", "Reuser", "Recycler", "Restorer", "Zero Waste"] as const;
+  const rankThresholds = [0, 100, 250, 500, 1000];
+  const currentRankIndex = Math.max(0, rankOrder.indexOf(userRank as (typeof rankOrder)[number]));
+  const isMaxRank = currentRankIndex >= rankOrder.length - 1;
+  const nextRankLabel = isMaxRank ? "Max Rank" : rankOrder[currentRankIndex + 1];
+  const currentThreshold = rankThresholds[currentRankIndex];
+  const nextThreshold = isMaxRank ? currentThreshold : rankThresholds[currentRankIndex + 1];
+  const progressPercent = isMaxRank
+    ? 100
+    : Math.max(
+        0,
+        Math.min(
+          100,
+          Math.round(((totalXP - currentThreshold) / (nextThreshold - currentThreshold)) * 100),
+        ),
+      );
+  const remainingXP = isMaxRank ? 0 : Math.max(0, nextThreshold - totalXP);
 
   return (
     <div className="min-h-screen bg-page-bg selection:bg-sprout flex flex-col font-sans text-ink">
-      <section className="mt-24 bg-surface border border-bark/10 p-12 relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.03)]">
-        <div className="grow max-w-7xl grid lg:grid-cols-2 gap-12 items-center w-full mx-auto">
+      <section className=" mt-24 bg-surface border border-bark/10 p-12 relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.03)]">
+        <div>
+          <div className="bg-linear-to-r from-page-bg from-30% to-70% to-transparent absolute top-0 left-0 w-full h-full z-2" />
+          <Image
+            src={"/images/BG.png"}
+            alt="Unscrap Background"
+            width={1920}
+            height={900}
+            className="absolute top-0 left-0 w-full h-full object-cover "
+          />
+        </div>
+        <div className="grow grid grid-cols-2 max-w-370 m-30 gap-12 items-center w-full relative">
           <div className="absolute top-0 right-0 w-96 h-96 bg-moss/5 blur-[100px] -translate-y-1/2 translate-x-1/2" />
 
           <div className="space-y-8 relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-sprout/20 border border-moss/10 rounded-full">
-              <Sparkles className="w-4 h-4 text-moss" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-moss">
-                Smart Repurposing
-              </span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-ink leading-[1.1] tracking-tight">
-              Turn kitchen waste into <br />
+            <h1 className="text-5xl md:text-7xl font-bold text-primary leading-[1.1] tracking-tight">
+              Turn kitchen waste into {" "}
               <span className="text-moss">wonder.</span>
             </h1>
-            <p className="text-lg text-muted max-w-lg leading-relaxed">
+            <p className="text-lg text-muted max-w-xl leading-relaxed">
               Snap a pic of vegetable peels, eggshells, or coffee grounds. Our
               AI instantly suggests compost recipes, natural fertilizers, and
               DIY cleaners.
@@ -85,42 +110,19 @@ export default function Home() {
               >
                 <Camera className="w-5 h-5" /> Open Scanner
               </Link>
-              <Link
+              {/* <Link
                 href="/suggestions"
                 className="px-8 py-4 bg-surface text-bark rounded-2xl font-bold text-sm border border-bark/20 hover:bg-sprout/10 transition-all flex items-center gap-3"
               >
                 <Package className="w-5 h-5 text-muted" /> View Library
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative flex items-center justify-center">
-            <div className="relative w-64 h-64 md:w-80 md:h-80">
-              <div className="absolute inset-0 bg-moss/5 blur-[60px]" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-48 h-48 bg-surface rounded-[40px] shadow-2xl flex flex-col items-center justify-center p-8 border border-bark/10">
-                  <div className="absolute -top-6 -right-6 w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl">
-                    {profileData?.rank === "Zero Waste" ? (
-                      <Trophy className="w-8 h-8" />
-                    ) : (
-                      <Scale className="w-8 h-8" />
-                    )}
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted mb-2">
-                    3R Lab Rank
-                  </span>
-                  <h2 className="text-lg font-bold text-ink text-center leading-tight uppercase tracking-tight">
-                    {userRank}
-                  </h2>
-                </div>
-              </div>
+              </Link> */}
             </div>
           </div>
         </div>
       </section>
       <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto flex-1 w-full flex flex-col gap-12">
-        <section className="overflow-x-auto pb-4 custom-scrollbar">
-          <div className="flex gap-6 min-w-max">
+        <section className="pb-4 custom-scrollbar">
+          <div className="grid lg:grid-cols-2 gap-6">
             {[
               {
                 label: "Total 3R Lab XP",
@@ -154,10 +156,10 @@ export default function Home() {
               <motion.div
                 key={i}
                 whileHover={{ scale: 1.05 }}
-                className="bg-surface border border-bark/10 rounded-[32px] p-8 flex items-center gap-6 w-80 shadow-sm"
+                className="bg-page-bg border border-bark/10 rounded-4xl p-8 flex items-center gap-6 shadow-lg w-full"
               >
                 <div
-                  className={`w-16 h-16 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center`}
+                  className={`w-16 h-16 bg-moss text-[#fdf6ec] rounded-2xl flex items-center justify-center`}
                 >
                   <stat.icon className="w-8 h-8" />
                 </div>
@@ -171,6 +173,66 @@ export default function Home() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden rounded-[36px] bg-linear-to-br from-[#6a4938] via-[#7c5a3f] to-[#8a6944] p-8 md:p-12 text-[#fdf6ec] shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(253,246,236,0.08),transparent_34%)]" />
+          <div className="relative grid gap-12 lg:grid-cols-[1.4fr_0.9fr] items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.35em] text-[#efe4d2]/80">
+                <Scale className="w-4 h-4" />
+                UnScrap Rank
+              </div>
+
+              <div className="space-y-5">
+                <h2 className="text-5xl md:text-7xl font-black tracking-tight leading-none">
+                  {userRank}
+                </h2>
+                <p className="max-w-2xl text-base md:text-lg leading-relaxed text-[#fdf6ec]/90">
+                  {isMaxRank
+                    ? "You’re at the top of the ladder. Keep scanning to keep your impact climbing."
+                    : `You’re ${remainingXP} XP away from ${nextRankLabel}. Keep scanning to unlock the next 3R Lab tier.`}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="h-3 rounded-full bg-[#fdf6ec]/20 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="h-full rounded-full bg-[#fdf6ec]"
+                  />
+                </div>
+                <div className="grid grid-cols-5 gap-2 text-center text-[11px] md:text-sm font-medium text-[#fdf6ec]/85">
+                  {rankOrder.map((rank, index) => (
+                    <span
+                      key={rank}
+                      className={index <= currentRankIndex ? "text-[#fdf6ec] font-bold" : "text-[#fdf6ec]/55"}
+                    >
+                      {rank}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center lg:justify-end">
+              <div className="relative flex h-64 w-64 md:h-80 md:w-80 items-center justify-center rounded-full border-[6px] border-dashed border-[#fdf6ec] text-center shadow-[0_0_0_14px_rgba(253,246,236,0.04)]">
+                <div className="space-y-3 px-6">
+                  <p className="text-5xl md:text-7xl font-black tracking-tight tabular-nums">
+                    {progressPercent}%
+                  </p>
+                  <p className="text-xl md:text-2xl font-bold leading-tight">
+                    To the Next Rank
+                  </p>
+                  <p className="text-sm md:text-base font-medium text-[#fdf6ec]/80">
+                    {isMaxRank ? "Max Rank Reached" : nextRankLabel}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
