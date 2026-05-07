@@ -1,0 +1,8 @@
+{
+  "name": "Unscrap",
+  "description": "An AI-powered smart repurposing platform that transforms kitchen waste into wonder. Features the 3R Lab gamification system, Scrappy AI companion, and real-time impact tracking.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}

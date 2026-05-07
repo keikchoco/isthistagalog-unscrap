@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account and Alchemy progression",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "totalXP": { "type": "number" },
+        "impactScore": { "type": "number", "description": "Total peso saved (₱)" },
+        "matterDiverted": { "type": "number", "description": "Total weight saved (kg)" },
+        "rank": { "type": "string", "enum": ["Reducer", "Reuser", "Recycler", "Restorer", "Zero Waste"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "totalXP", "impactScore", "matterDiverted", "rank", "createdAt"]
+    },
+    "ScrapLog": {
+      "title": "Scrap Log",
+      "description": "History of Eco-Alchemy transmutations",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "item": { "type": "string" },
+        "rarity": { "type": "string", "enum": ["Everyday", "Reusable", "Recyclable", "Rare Resource", "Raw"] },
+        "suggestions": { "type": "array" },
+        "co2_diverted_grams": { "type": "number" },
+        "peso_saved": { "type": "number" },
+        "xp_reward": { "type": "number" },
+        "safe_to_use": { "type": "boolean" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "item", "rarity", "suggestions", "co2_diverted_grams", "peso_saved", "xp_reward", "safe_to_use", "timestamp"]
+    },
+    "MapPin": {
+      "title": "Community Pin",
+      "description": "A shared scrap or drop-off point on the map",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "type": { "type": "string", "enum": ["scrap", "drop-off", "exchange"] },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "title", "location", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile data"
+    },
+    "/scraps/{scrapId}": {
+      "schema": "ScrapLog",
+      "description": "Logs of user scraps"
+    },
+    "/pins/{pinId}": {
+      "schema": "MapPin",
+      "description": "Community shared pins"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Phase 3: Primitive Definition
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Helpers
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'totalXP', 'totalSavedKg', 'totalMoneySavedUsd', 'level', 'createdAt']) &&
+             data.uid == request.auth.uid &&
+             data.email is string &&
+             data.totalXP is number &&
+             data.totalSavedKg is number &&
+             data.totalMoneySavedUsd is number &&
+             data.level is string;
+    }
+
+    function isValidScrap(data) {
+      return data.keys().hasAll(['userId', 'userName', 'items', 'itemName', 'rarity', 'xpEarned', 'co2SavedGrams', 'moneySavedUsd', 'timestamp']) &&
+             data.userId == request.auth.uid &&
+             data.items is list &&
+             data.xpEarned is number &&
+             data.co2SavedGrams is number &&
+             data.moneySavedUsd is number;
+    }
+
+    function isValidPin(data) {
+      return data.keys().hasAll(['userId', 'userName', 'type', 'title', 'location', 'createdAt', 'description']) &&
+             data.userId == request.auth.uid &&
+             data.type in ['scrap', 'drop-off', 'exchange'] &&
+             data.title is string && data.title.size() <= 100 &&
+             data.location.lat is number && data.location.lng is number;
+    }
+
+    // Collections
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId);
+    }
+
+    match /scraps/{scrapId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidScrap(incoming());
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /pins/{pinId} {
+      allow list: if isSignedIn();
+      allow get: if isSignedIn();
+      allow create: if isSignedIn() && isValidPin(incoming()) && isValidId(pinId);
+      allow update: if isSignedIn() && existing().userId == request.auth.uid && isValidPin(incoming());
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+  }
+}
