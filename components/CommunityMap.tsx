@@ -9,7 +9,7 @@ import {
   useMapEvents 
 } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Search, Plus, X, Share2, Clipboard, Navigation, Store, Leaf } from 'lucide-react';
+import { MapPin, Search, Plus, X, Share2, Clipboard, Leaf } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Fix for default marker icons in Leaflet with React
@@ -52,8 +52,9 @@ export default function CommunityMap({ user }: { user: any }) {
   const [clickedLocation, setClickedLocation] = useState<L.LatLng | null>(null);
   const [newPinTitle, setNewPinTitle] = useState('');
   const [newPinDescription, setNewPinDescription] = useState('');
-  const [newPinType, setNewPinType] = useState<'scrap' | 'drop-off' | 'exchange'>('scrap');
+  const [newPinType] = useState<'scrap' | 'drop-off' | 'exchange'>('drop-off');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPins();
@@ -82,6 +83,11 @@ export default function CommunityMap({ user }: { user: any }) {
   };
 
   const handleAddPin = async () => {
+    setErrorMessage(null);
+    if (!user?.email) {
+      setErrorMessage('Please sign in to create a hub point.');
+      return;
+    }
     if (!newPinTitle || !clickedLocation) return;
 
     try {
@@ -104,11 +110,17 @@ export default function CommunityMap({ user }: { user: any }) {
         setNewPinTitle('');
         setNewPinDescription('');
         fetchPins();
+      } else {
+        const payload = await res.json().catch(() => ({}));
+        setErrorMessage(payload?.error || 'Could not create hub point.');
       }
     } catch (error) {
       console.error("Error adding pin:", error);
+      setErrorMessage('Could not create hub point. Please try again.');
     }
   };
+
+  const hasCurrentUserHub = Boolean(user?.email && pins.some((pin) => pin.userId === user.email));
 
   const handleShare = async (pin: CommunityPin) => {
     const text = `Check out this ${pin.type} site on Unscrap: ${pin.title}`;
@@ -125,6 +137,13 @@ export default function CommunityMap({ user }: { user: any }) {
       setCopiedId(pin._id);
       setTimeout(() => setCopiedId(null), 2000);
     }
+  };
+
+  const openOsmDirections = (pin: CommunityPin) => {
+    // OSM directions with destination coordinates in lat,lng order.
+    const destination = `${pin.location.lat},${pin.location.lng}`;
+    const url = `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=;${destination}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const getIcon = (type: string) => {
@@ -178,21 +197,41 @@ export default function CommunityMap({ user }: { user: any }) {
 
         <button 
           onClick={() => {
+            setErrorMessage(null);
             setIsAddingMode(!isAddingMode);
             setClickedLocation(null);
           }}
+          disabled={!user?.email || hasCurrentUserHub}
           className={`px-6 py-4 rounded-2xl font-bold text-xs flex items-center gap-3 shadow-xl transition-all ${isAddingMode ? 'bg-red-500 text-white' : 'bg-primary text-white hover:scale-105 active:scale-95 shadow-[0_10px_20px_rgba(92,64,51,0.2)]'}`}
         >
           {isAddingMode ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          {isAddingMode ? 'Cancel' : 'Share Resource'}
+          {isAddingMode ? 'Cancel' : hasCurrentUserHub ? 'Hub Point Created' : 'Create Hub Point'}
         </button>
+
+        {errorMessage && (
+          <p className="bg-red-50 text-red-700 border border-red-200 px-3 py-2 rounded-xl text-xs font-semibold">
+            {errorMessage}
+          </p>
+        )}
+
+        {!user?.email && (
+          <p className="bg-amber-50 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl text-xs font-semibold">
+            Sign in to place your hub point.
+          </p>
+        )}
+
+        {user?.email && hasCurrentUserHub && (
+          <p className="bg-moss/10 text-moss border border-moss/20 px-3 py-2 rounded-xl text-xs font-semibold">
+            You already placed your hub point. Other users can still see it.
+          </p>
+        )}
       </div>
 
       <MapContainer 
         center={[14.5995, 120.9842]} 
         zoom={11} 
         scrollWheelZoom={true} 
-        className="w-full h-full z-0"
+        className="w-full h-[600px] md:h-[680px] z-0"
         zoomControl={false}
       >
         <TileLayer
@@ -226,7 +265,7 @@ export default function CommunityMap({ user }: { user: any }) {
 
                 <div className="flex gap-2 pt-1">
                   <button 
-                    onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${pin.location.lat},${pin.location.lng}`)}
+                    onClick={() => openOsmDirections(pin)}
                     className="flex-1 bg-primary text-white py-2 px-3 rounded-lg text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-bark transition-all shadow-sm"
                   >
                     <MapPin className="w-3 h-3" /> Directions
@@ -243,44 +282,36 @@ export default function CommunityMap({ user }: { user: any }) {
           </Marker>
         ))}
 
-        {isAddingMode && clickedLocation && (
-          <Marker position={clickedLocation}>
-            <Popup position={clickedLocation} offset={[0, -10]}>
-              <div className="bg-surface p-4 rounded-xl shadow-2xl border border-bark/10 w-60 font-sans text-ink">
-                <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-3">Place a Pin</p>
-                <input 
-                  placeholder="What are you sharing?"
-                  className="w-full text-xs font-bold bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none focus:border-moss mb-2"
-                  value={newPinTitle}
-                  onChange={e => setNewPinTitle(e.target.value)}
-                  autoFocus
-                />
-                <textarea 
-                  placeholder="Brief description..."
-                  className="w-full text-xs font-medium bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none focus:border-moss mb-2 resize-none h-16 text-ink"
-                  value={newPinDescription}
-                  onChange={e => setNewPinDescription(e.target.value)}
-                />
-                <select 
-                  className="w-full text-[10px] font-bold bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none mb-3 text-ink"
-                  value={newPinType}
-                  onChange={e => setNewPinType(e.target.value as any)}
-                >
-                  <option value="scrap">Organic Scrap</option>
-                  <option value="drop-off">Drop-off Point</option>
-                  <option value="exchange">Resource Exchange</option>
-                </select>
-                <button 
-                  onClick={handleAddPin}
-                  className="w-full bg-primary text-white py-2 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-md hover:scale-105 active:scale-95 transition-all"
-                >
-                  Create Community Pin
-                </button>
-              </div>
-            </Popup>
-          </Marker>
-        )}
+        {isAddingMode && clickedLocation && <Marker position={clickedLocation} />}
       </MapContainer>
+
+      {isAddingMode && clickedLocation && (
+        <div className="absolute top-24 right-6 z-[1002] w-[300px] bg-surface/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-bark/10">
+          <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-2">Place Hub Point</p>
+          <p className="text-[10px] font-semibold text-muted mb-3">
+            Selected: {clickedLocation.lat.toFixed(5)}, {clickedLocation.lng.toFixed(5)}
+          </p>
+          <input
+            placeholder="Hub name"
+            className="w-full text-xs font-bold bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none focus:border-moss mb-2"
+            value={newPinTitle}
+            onChange={e => setNewPinTitle(e.target.value)}
+            autoFocus
+          />
+          <textarea
+            placeholder="Brief description..."
+            className="w-full text-xs font-medium bg-sprout/5 p-2 rounded-lg border border-bark/10 focus:outline-none focus:border-moss mb-3 resize-none h-16 text-ink"
+            value={newPinDescription}
+            onChange={e => setNewPinDescription(e.target.value)}
+          />
+          <button
+            onClick={handleAddPin}
+            className="w-full bg-primary text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-md hover:scale-105 active:scale-95 transition-all"
+          >
+            Save Hub Point
+          </button>
+        </div>
+      )}
 
       {isAddingMode && !clickedLocation && (
         <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none flex items-center justify-center z-[1001]">
